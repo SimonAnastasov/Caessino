@@ -1,9 +1,9 @@
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap);
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 a {
@@ -12,5 +12,730 @@ a {
 }
 
 * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
+
+p, h1, h3 {
+  margin: 0;
+}
+
+.app {
+  color: white;
+  letter-spacing: 1px;
+  width: 100vw;
+  height: 100vh;
+  margin: auto;
+  overflow: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0% 50%;
+  text-align: center;
+}
+
+/**
+  * Component <- Header
+  */
+header.header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 92vw;
+  margin: auto;
+  margin-top: 20px;
+}
+
+header.header .logo {
+  width: 80px;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background-image: url("/images/logo.png");
+  background-size: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+header.header h2 {
+  cursor: pointer;
+}
+
+header.header nav ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  list-style-type: none;
+}
+
+header.header nav ul li {
+  cursor: pointer;
+  margin-right: 4rem;
+}
+
+header.header nav ul li:last-child {
+  margin-right: 0;
+}
+
+/**
+  * Component <- Full Width Text
+  *
+  * Used in "Welcome To Caessino"
+  */
+.fullwidthText {
+  width: 100vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-top: 40px;
+  padding: 15px 0 20px 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.fullwidthText h1 {
+  color: #FFD700;
+  font-weight: lighter;
+  font-size: 2.5rem;
+}
+
+.fullwidthText h3 {
+  margin-top: 15px;
+  font-weight: lighter;
+}
+
+/**
+  * Component <- Alert
+  *
+  * Similar to Full Width Text
+  */
+.alert {
+  width: 100vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 20px 0 25px 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  top: 50vh;
+  -webkit-transform: translateY(-70%);
+          transform: translateY(-70%);
+  -webkit-transition: '.5s linear';
+  transition: '.5s linear';
+}
+
+.alert h1 {
+  color: #FFD700;
+  font-weight: lighter;
+  font-size: 2.5rem;
+}
+
+.alert h3 {
+  margin-top: 10px;
+  font-weight: lighter;
+}
+
+.alert button {
+  width: 500px;
+  margin-top: 20px;
+}
+
+/**
+  * Component <- Notification
+  *
+  * Displayed fixed in the top right corner
+  */
+.notification {
+  position: fixed;
+  top: 40px;
+  right: 30px;
+  width: 500px;
+  min-height: 200px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  font-size: 2rem;
+  padding: 20px;
+  border-radius: 15px;
+  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+}
+
+.notification svg {
+  cursor: pointer;
+}
+
+.notification > div {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+/**
+  * Component <- Game Circle
+  *
+  * Used in Landing Page -> to display the games in circles
+  */
+.gameCircles {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 92vw;
+  margin: auto;
+  margin-top: 50px;
+}
+
+.gameCircles .gameCircle {
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.gameCircles .gameCircle .circleLarge {
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+  width: 22vw;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background: -webkit-gradient(linear, left bottom, right top, from(#ffd900cc), to(#B65714));
+  background: linear-gradient(to top right, #ffd900cc, #B65714);
+  opacity: .95;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.gameCircles .gameCircle .circleLarge .circle {
+  border-radius: 100%;
+  width: 98%;
+  background-size: cover;
+  margin: auto;
+  aspect-ratio: 1;
+}
+
+.gameCircles .gameCircle h3 {
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+  font-weight: lighter;
+  margin-top: 30px;
+  opacity: 0;
+}
+
+.gameCircles .gameCircle h1.loading {
+  color: white;
+  position: absolute;
+  width: 100vw;
+  top: 50vh;
+  left: 50vw;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  font-size: 5rem;
+  z-index: 10;
+}
+
+.gameCircles .gameCircle:hover .circleLarge {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+  opacity: 1;
+}
+
+.gameCircles .gameCircle:hover h3 {
+  opacity: 1;
+}
+
+.gameCircles:hover .gameCircle .circleLarge {
+  opacity: 1 !important;
+}
+
+/**
+  * Full Screen Overlay
+  */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: -webkit-gradient(linear, left top, right top, from(#0B932E), to(#097625));
+  background: linear-gradient(to right, #0B932E, #097625);
+  color: #ead24d;
+}
+
+.fs-centered > div {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+.fs-inputs-container > div {
+  margin: auto;
+  margin-top: 2.4rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.fs-inputs-container > div > span {
+  margin-bottom: .5rem;
+  font-size: 1.5rem;
+}
+
+.fs-inputs-container > div > input {
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.statsScreen svg {
+  cursor: pointer;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.statsScreen > div h1 {
+  font-size: 2.5rem;
+  margin-bottom: 5rem;
+}
+
+.statsScreen > div p {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.statsScreen > div p:nth-child(2n) {
+  color: white;
+}
+
+.statsScreen > div p span {
+  margin-left: 5rem;
+}
+
+.manageCreditsScreen svg {
+  cursor: pointer;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.manageCreditsScreen > div h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.manageCreditsScreen > div p {
+  margin-bottom: 5rem;
+  color: white;
+}
+
+.manageCreditsScreen > div button {
+  width: 100%;
+}
+
+.inlineAlert {
+  cursor: pointer;
+  background-color: #ffdddd;
+  padding: .8rem 2.4rem;
+  border-radius: 15px;
+  color: #ff0000;
+  font-size: 1.8rem !important;
+  font-weight: 100;
+  letter-spacing: -.030em;
+}
+
+/**
+  * Component <- Loading
+  */
+.loadingScreen h1 {
+  font-size: 5rem;
+}
+
+/**
+  * Component <- RegisterScreen
+  */
+/**
+  * Primary Thingies
+  */
+.primaryButton {
+  background: -webkit-gradient(linear, left top, right top, from(#0B932E), to(#097625));
+  background: linear-gradient(to right, #0B932E, #097625);
+  color: #ead24d;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 20px;
+  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+}
+
+.primaryButton:hover {
+  -webkit-transform: scale(1.1) rotateZ(-1deg);
+          transform: scale(1.1) rotateZ(-1deg);
+}
+
+.primaryButton:active {
+  -webkit-transition: .05s linear;
+  transition: .05s linear;
+  -webkit-transform: scale(1) rotateZ(-1deg);
+          transform: scale(1) rotateZ(-1deg);
+}
+
+.secondaryButton {
+  background: -webkit-gradient(linear, left top, right top, from(#4d99ea), to(#4d99ea));
+  background: linear-gradient(to right, #4d99ea, #4d99ea);
+  color: white;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 20px;
+  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+}
+
+.secondaryButton:hover {
+  -webkit-transform: scale(1.1) rotateZ(-1deg);
+          transform: scale(1.1) rotateZ(-1deg);
+}
+
+.secondaryButton:active {
+  -webkit-transition: .05s linear;
+  transition: .05s linear;
+  -webkit-transform: scale(1) rotateZ(-1deg);
+          transform: scale(1) rotateZ(-1deg);
+}
+
+/**
+  * Input Sliders
+  */
+.primarySlider {
+  -webkit-appearance: none;
+  width: 250px;
+  height: 10px;
+  background: #0B932E;
+  outline: none;
+  border-radius: 10px;
+  -webkit-transition: .2s;
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  -webkit-box-shadow: 0 5px 25px rgba(234, 210, 77, 0.25);
+          box-shadow: 0 5px 25px rgba(234, 210, 77, 0.25);
+}
+
+.primarySlider:hover {
+  opacity: 1;
+}
+
+.primarySlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: url("/images/gold-coin.png");
+  background-size: contain;
+  background-color: #ead24d;
+  cursor: pointer;
+}
+
+.primarySlider::-moz-range-thumb {
+  -moz-appearance: none;
+       appearance: none;
+  outline: none;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: url("/images/gold-coin.png");
+  background-size: contain;
+  background-color: #ead24d;
+  cursor: pointer;
+}
+
+/**
+  * Scrollbar
+  */
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0B932E;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ead24d;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #efcb00;
+}
+
+/**
+  * File <- Blackjack Main
+  * Components <- PlayButtons, Cards
+  */
+.blackjackButtons {
+  position: absolute;
+  left: 0;
+  top: 90vh;
+  width: 100vw;
+  height: 10vh;
+  overflow: hidden;
+}
+
+.blackjackButtons > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+}
+
+.blackjackButtons > div > button {
+  width: 300px;
+}
+
+.blackjackButtons > div > button:nth-child(2) {
+  margin-left: 30px;
+}
+
+.blackjackCards .card {
+  aspect-ratio: 400/560;
+  height: 150px;
+  background-size: contain;
+  position: absolute;
+  -webkit-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+
+.blackjackDisplayBet {
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  left: 51vw;
+  top: 63.5vh;
+}
+
+.blackjackSideBetsModal {
+  z-index: 20;
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: column !important;
+          flex-direction: column !important;
+  position: fixed;
+  left: 50vw;
+  top: 45vh;
+  width: 41vw;
+  height: 80vh;
+  padding: 10px;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background: -webkit-gradient(linear, left top, right top, from(#0B932Ec0), to(#097625e0));
+  background: linear-gradient(to right, #0B932Ec0, #097625e0);
+  -webkit-box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  overflow-y: scroll;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect:first-child {
+  margin-top: 10rem;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect h1 {
+  margin-bottom: 1rem;
+  color: #ead24d;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect > div {
+  text-align: left;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect > div p {
+  margin-bottom: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-transition: all .25s linear;
+  transition: all .25s linear;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect > div p span {
+  font-size: 1.2rem;
+  color: #ead24d;
+}
+
+.blackjackSideBetsModal .blackjackSideBetSelect > div p:hover {
+  color: #ead24d;
+  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+}
+
+.blackjackSideBetsChooseCreditsModal {
+  z-index: 20;
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: column !important;
+          flex-direction: column !important;
+  position: fixed;
+  left: 50vw;
+  top: 45vh;
+  width: 41vw;
+  height: 80vh;
+  padding: 10px;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background: -webkit-gradient(linear, left top, right top, from(#00000080), to(#00000080));
+  background: linear-gradient(to right, #00000080, #00000080);
+  -webkit-box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+}
+
+.blackjackSideBetsChooseCreditsModal p {
+  margin-bottom: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  -webkit-transition: all .25s linear;
+  transition: all .25s linear;
+}
+
+.blackjackSideBetsChooseCreditsModal p span {
+  font-size: 1.2rem;
+  color: white;
+}
+/*# sourceMappingURL=globals.css.map */

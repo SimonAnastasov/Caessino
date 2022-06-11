@@ -1,0 +1,722 @@
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap);
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  // font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  font-family: 'Inter', sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// my code below:
+p, h1, h3 {
+  margin: 0;
+}
+
+.app {
+  color: white;
+
+  letter-spacing: 1px;
+
+  width: 100vw;
+  height: 100vh;
+
+  margin: auto;
+
+  overflow: hidden;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0% 50%;
+
+  text-align: center;
+}
+
+/**
+  * Component <- Header
+  */
+header.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 92vw;
+  margin: auto;
+  margin-top: 20px;
+
+  .logo {
+    width: 80px;
+    aspect-ratio: 1;
+    border-radius: 100%;
+
+    background-image: url("/images/logo.png");
+    background-size: cover;
+
+    border: 2px solid rgba(255, 255, 255, 0.2);
+
+    cursor: pointer;
+  }
+
+  h2 {
+    cursor: pointer;
+  }
+
+  nav {
+    ul {
+      display: flex;
+      flex-direction: row;
+      list-style-type: none;
+
+      li {
+        cursor: pointer;
+
+        margin-right: 4rem;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+/**
+  * Component <- Full Width Text
+  *
+  * Used in "Welcome To Caessino"
+  */
+.fullwidthText {
+  width: 100vw;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 40px;
+
+  padding: 15px 0 20px 0;
+
+  background-color: rgba(0, 0, 0, .6);
+
+  h1 {
+    color: #FFD700;
+    font-weight: lighter;
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    margin-top: 15px;
+    font-weight: lighter;
+  }
+}
+
+/**
+  * Component <- Alert
+  *
+  * Similar to Full Width Text
+  */
+.alert {
+  width: 100vw;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px 0 25px 0;
+
+  background-color: rgba(0, 0, 0, .9);
+
+  position: absolute;
+  top: 50vh;
+
+  transform: translateY(-70%);
+  
+  transition: '.5s linear';
+
+  h1 {
+    color: #FFD700;
+    font-weight: lighter;
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    margin-top: 10px;
+    font-weight: lighter;
+  }
+
+  button {
+    width: 500px;
+    margin-top: 20px;
+  }
+}
+
+/**
+  * Component <- Notification
+  *
+  * Displayed fixed in the top right corner
+  */
+.notification {
+  position: fixed;
+  top: 40px;
+  right: 30px;
+  
+  width: 500px;
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+
+  svg {
+    cursor: pointer;
+  }
+
+  &>div {
+    flex: 1;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.5rem;
+
+    margin-bottom: 1.2rem;
+
+    text-align: center;
+  }
+
+  font-size: 2rem;
+
+  padding: 20px;
+  border-radius: 15px;
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+}
+
+/**
+  * Component <- Game Circle
+  *
+  * Used in Landing Page -> to display the games in circles
+  */
+.gameCircles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 92vw;
+  margin: auto;
+  margin-top: 50px;
+
+  .gameCircle {
+    transition: all .2s linear;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .circleLarge {
+      transition: all .2s linear;
+      
+      width: 22vw;
+      aspect-ratio: 1;
+      
+      border-radius: 100%;
+      
+      background: linear-gradient(to top right, #ffd900cc, #B65714);
+      opacity: .95;
+      
+      display: flex;
+      flex-direction: column;
+
+      .circle {
+        border-radius: 100%;
+        width: 98%;
+        background-size: cover;
+        margin: auto;
+        aspect-ratio: 1;
+      }
+    }
+
+    h3 {
+      transition: all .2s linear;
+
+      font-weight: lighter;
+      margin-top: 30px;
+
+      opacity: 0;
+    }
+
+    h1.loading {
+      color: white;
+      position: absolute;
+      width: 100vw;
+      top: 50vh;
+      left: 50vw;
+      transform: translate(-50%, -50%);
+
+      font-size: 5rem;
+
+      z-index: 10;
+    }
+
+    &:hover {
+      .circleLarge {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+
+      h3 {
+        opacity: 1;
+      }
+    }
+  }
+  
+  &:hover {
+    .gameCircle {
+      .circleLarge {
+        opacity: 1 !important;
+      }
+    }
+  }
+}
+
+/**
+  * Full Screen Overlay
+  */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: linear-gradient(to right, #0B932E, #097625);
+  color: #ead24d;
+}
+
+.fs-centered {
+  &>div {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.fs-inputs-container {
+  &>div {
+    margin: auto;
+    margin-top: 2.4rem;
+    width: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    &>span {
+      margin-bottom: .5rem;
+      
+      font-size: 1.5rem;
+    }
+    
+    &>input {
+      margin-bottom: 2rem;
+      
+      font-size: 2rem;
+    }
+  }
+}
+
+.statsScreen {
+  svg {
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: white;
+  }
+
+  &>div {
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 5rem;
+    }
+
+    p {
+      display: flex;
+      justify-content: space-between;
+
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+
+      &:nth-child(2n) {
+        color: white;
+      }
+
+      span {
+        margin-left: 5rem;
+      }
+    }
+  }
+}
+
+.manageCreditsScreen {
+  svg {
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: white;
+  }
+
+  &>div {
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 5rem;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.inlineAlert {
+  cursor: pointer;
+
+  background-color: #ffdddd;
+  padding: .8rem 2.4rem;
+  border-radius: 15px;
+
+  color: #ff0000;
+  font-size: 1.8rem !important;
+  font-weight: 100;
+  letter-spacing: -.030em;
+}
+
+/**
+  * Component <- Loading
+  */
+.loadingScreen {
+  h1 {
+    font-size: 5rem;
+  }
+}
+
+/**
+  * Component <- RegisterScreen
+  */
+
+/**
+  * Primary Thingies
+  */
+.primaryButton {
+  background: linear-gradient(to right, #0B932E, #097625);
+  color: #ead24d;
+
+  outline: none;
+  border: none;
+  border-radius: 10px;
+
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 20px;
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+
+  cursor: pointer;
+  transition: all .2s linear;
+
+  &:hover {
+    transform: scale(1.1) rotateZ(-1deg);
+    // padding: 10px 20px;
+  }
+
+  &:active {
+    transition: .05s linear;
+    transform: scale(1) rotateZ(-1deg);
+  }
+}
+
+.secondaryButton {
+  background: linear-gradient(to right, #4d99ea, #4d99ea);
+  color: white;
+
+  outline: none;
+  border: none;
+  border-radius: 10px;
+
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 5px 20px;
+
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+
+  cursor: pointer;
+  transition: all .2s linear;
+
+  &:hover {
+    transform: scale(1.1) rotateZ(-1deg);
+    // padding: 10px 20px;
+  }
+
+  &:active {
+    transition: .05s linear;
+    transform: scale(1) rotateZ(-1deg);
+  }
+}
+
+/**
+  * Input Sliders
+  */
+.primarySlider {
+  -webkit-appearance: none;
+  width: 250px;
+  height: 10px;
+  background: #0B932E;
+  outline: none;
+  border-radius: 10px;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+
+  box-shadow: 0 5px 25px rgba(234, 210, 77, 0.25);
+}
+
+.primarySlider:hover {
+  opacity: 1;
+}
+
+.primarySlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: url("/images/gold-coin.png");
+  background-size: contain;
+  background-color: #ead24d;
+  cursor: pointer;
+}
+
+.primarySlider::-moz-range-thumb {
+  appearance: none;
+  outline: none;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: url("/images/gold-coin.png");
+  background-size: contain;
+  background-color: #ead24d;
+  cursor: pointer;
+}
+
+/**
+  * Scrollbar
+  */
+
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0B932E;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ead24d;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #efcb00;
+}
+
+/**
+  * File <- Blackjack Main
+  * Components <- PlayButtons, Cards
+  */
+.blackjackButtons {
+  position: absolute;
+
+  left: 0;
+  top: 90vh;
+
+  width: 100vw;
+  height: 10vh;
+
+  overflow: hidden;
+
+  &>div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    transition: .5s ease-in-out;
+
+    &>button {
+      width: 300px;
+    }
+
+    &>button:nth-child(2) {
+      margin-left: 30px;
+    }
+  }
+}
+
+.blackjackCards {
+  .card {    
+    aspect-ratio: 400/560;
+    height: 150px;
+
+    background-size: contain;
+
+    position: absolute;
+
+    transition: .5s ease-in-out;
+
+    border-radius: 10px;
+
+    border: 1px solid black;
+  }
+}
+
+.blackjackDisplayBet {
+  position: absolute;
+
+  transform: translate(-50%, -50%);
+
+  left: 51vw;
+  top: 63.5vh;
+}
+
+.blackjackSideBetsModal {
+  z-index: 20;
+
+  flex-direction: column !important;
+
+  position: fixed;
+  left: 50vw;
+  top: 45vh;
+
+  width: 41vw;
+  height: 80vh;
+
+  padding: 10px;
+
+  transform: translate(-50%, -50%);
+
+  background: linear-gradient(to right, #0B932Ec0, #097625e0);
+
+  box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+
+  border-radius: 20px;
+
+  overflow-y: scroll;
+
+  .blackjackSideBetSelect {
+    &:first-child {
+      margin-top: 10rem;
+    }
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+    h1 {
+      margin-bottom: 1rem;
+      
+      color: #ead24d;
+    }
+
+    &>div {
+      text-align: left;
+
+      p {
+        margin-bottom: 1rem;
+
+        padding: 10px 20px;
+        border-radius: 5px;
+
+        cursor: pointer;
+
+        transition: all .25s linear;
+
+        span {
+          font-size: 1.2rem;
+          color: #ead24d;
+        }
+        
+        &:hover {
+          color: #ead24d;
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);          
+        }
+      }
+    }
+  }
+}
+
+.blackjackSideBetsChooseCreditsModal {
+  z-index: 20;
+
+  flex-direction: column !important;
+
+  position: fixed;
+  left: 50vw;
+  top: 45vh;
+
+  width: 41vw;
+  height: 80vh;
+
+  padding: 10px;
+
+  transform: translate(-50%, -50%);
+
+  background: linear-gradient(to right, #00000080, #00000080);
+
+  box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
+
+  border-radius: 20px;
+
+  p {
+    margin-bottom: 1rem;
+
+    padding: 10px 20px;
+    border-radius: 5px;
+
+    transition: all .25s linear;
+
+    span {
+      font-size: 1.2rem;
+      color: white;
+    }
+  }
+}
