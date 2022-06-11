@@ -4,12 +4,6 @@ import { ArcText } from '@arctext/react'
 
 import { useRouter } from 'next/router'
 
-import { useState } from 'react'
-
-import { setInGame } from '../redux/reducers/playerSlice'
-import { useDispatch } from 'react-redux'
-import FullwidthText from './FullwidthText'
-
 const GameCircle = ( { src, text, routeTo, game } ) => {
   const router = useRouter()
 

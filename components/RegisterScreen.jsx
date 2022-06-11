@@ -2,14 +2,31 @@ import React from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 
+import { useRef } from 'react'
+
 import { setStyle } from '../redux/reducers/styleSlice';
 
 import axios from 'axios';
 
 const RegisterScreen = () => {
+    const ref = useRef(null);
+
     const dispatch = useDispatch();
 
     const styleState = useSelector(state => state.style);
+
+    setTimeout(() => {
+        if (styleState.style.displayRegisterScreen && styleState.style.registerScreenInfo.setFocus) {
+            ref.current.focus();
+            dispatch(setStyle({
+                ...styleState.style,
+                registerScreenInfo: {
+                    ...styleState.style.registerScreenInfo,
+                    setFocus: false
+                }
+            }))
+        }
+    }, 10);
 
     function onChangeUsername(e) {
         dispatch(setStyle({
@@ -39,6 +56,12 @@ const RegisterScreen = () => {
                 password: e.target.value,
             }
         }))
+    }
+
+    function keyUp(e) {
+        if (e.key === 'Enter') {
+            register();
+        }
     }
 
     function closeForm() {
@@ -88,6 +111,7 @@ const RegisterScreen = () => {
                             text: 'Successfully registered! Please Log In now.',
                             status: 'success',
                         },
+                        inlineAlertText: '',
                     }));
                 }
                 else {
@@ -106,11 +130,11 @@ const RegisterScreen = () => {
                 {styleState.style.inlineAlertText.length > 0 && <span className="inlineAlert">{styleState.style.inlineAlertText}</span>}
                 <div>
                     <span>Username:</span>
-                    <input type="text" onChange={(e) => {onChangeUsername(e)}} value={styleState.style.registerScreenInfo.username}/>
+                    <input ref={ref} type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.username} placeholder="your username..."/>
                     <span>Display Name:</span>
-                    <input type="text" onChange={(e) => {onChangeDisplayName(e)}} value={styleState.style.registerScreenInfo.displayName}/>
+                    <input type="text" onChange={(e) => {onChangeDisplayName(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.displayName} placeholder="your display name..."/>
                     <span>Password:</span>
-                    <input type="password" onChange={(e) => {onChangePassword(e)}} value={styleState.style.registerScreenInfo.password}/>
+                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.password} placeholder="your password..."/>
                     <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <button className="primaryButton" onClick={() => closeForm()}>Close Form</button>
                         <button className="secondaryButton" onClick={() => register()}>Register</button>

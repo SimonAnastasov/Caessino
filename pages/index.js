@@ -1,3 +1,5 @@
+import Head from 'next/head'
+
 import Header from '../components/Header'
 import FullwidthText from '../components/FullwidthText'
 import GameCircle from '../components/GameCircle'
@@ -7,18 +9,19 @@ import LoginScreen from '../components/LoginScreen'
 import Alert from '../components/Alert'
 import Notification from '../components/Notification'
 import Stats from '../components/Stats'
-
-import Head from 'next/head'
-
-import { useDispatch } from 'react-redux'
 import ManageCredits from '../components/ManageCredits'
 
 export default function Home() {
-  const dispatch = useDispatch();
-
   return (
     <div className="app" style={{backgroundImage: 'url("/images/bg.png")'}}>
       <Head>
+        <meta charSet="utf-8"/>
+        <meta name="description" content="Enjoy your stay at Caessino (The best E-Casino out there!). Play Blackjack, Roulette or Poker and win huge prizes!"/>
+        <meta name="keywords" content="caessino, e-casino, casino, blackjack, roulette, poker"/>
+
+        <meta name="author" content="ESS" />
+        <meta name="copyright" content="ESS CORP" />
+
         <title>Caessino</title>
       </Head>
   

@@ -8,7 +8,7 @@ const crypto = require('crypto');
 
 const Pool = require('pg').Pool
 const pool = new Pool({
-  connectionString: 'postgres://postgres:postgres@db/postgres'
+  connectionString: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}/${process.env.POSTGRES_DB}`
 });
 
 const sessions = []
@@ -21,14 +21,6 @@ const sessions = []
 //   lastActivity,
 // }
 
-// update credits in database
-// setInterval(() => {
-//   sessions.filter(session => Date.now() - session.lastActivity > 5*60*1000).forEach(session => {
-//     pool.query('UPDATE players SET credits = $1 WHERE username = $2', [session.credits, session.username], (error, results) => {
-//       if (error) throw error;
-//     });
-//   });
-// }, 5*60*1000)
 
 export default function handler(req, res) {
   /**

@@ -7,7 +7,6 @@ import { setGame, setPlayer } from '../../redux/reducers/playerSlice';
 import { setBlackjack, setStyle } from '../../redux/reducers/styleSlice';
 
 import { useSelector, useDispatch } from 'react-redux'
-import { useState, useEffect } from 'react'
 
 import axios from 'axios';
 

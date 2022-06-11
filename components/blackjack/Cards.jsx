@@ -2,17 +2,10 @@ import React from 'react'
 
 import { useSelector } from 'react-redux'
 
-import { useState } from 'react'
-
 import Card from '../Card'
 
 const Cards = () => {
   const playerState = useSelector(state => state.player)
-
-  let initialPos = {
-    left: 70,
-    top: 24,
-  }
 
   let playerPos = {
     left: 50,

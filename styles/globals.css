@@ -77,12 +77,15 @@ header.header nav ul {
 }
 
 header.header nav ul li {
-  cursor: pointer;
   margin-right: 4rem;
 }
 
 header.header nav ul li:last-child {
   margin-right: 0;
+}
+
+header.header nav.mainHeaderNavigation ul li {
+  cursor: pointer;
 }
 
 /**
@@ -374,6 +377,8 @@ header.header nav ul li:last-child {
 
 .fs-inputs-container > div > input {
   margin-bottom: 2rem;
+  padding-left: 4px;
+  padding-right: 4px;
   font-size: 2rem;
 }
 

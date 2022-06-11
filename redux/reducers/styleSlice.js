@@ -6,12 +6,14 @@ const initialState = {
         displayLoadingScreen: false,
         displayRegisterScreen: false,
         registerScreenInfo: {
+            setFocus: true,
             username: '',
             displayName: '',
             password: '',
         },
         displayLoginScreen: false,
         loginScreenInfo: {
+            setFocus: true,
             username: '',
             password: '',
         },

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import InGameHeader from '../../components/InGameHeader'
+import BlackjackHeader from './BlackjackHeader'
 
 import Head from 'next/head'
 import PlayButtons from '../../components/blackjack/PlayButtons'
@@ -17,7 +17,7 @@ const Blackjack = () => {
         <title>Caessino - Blackjack</title>
       </Head>
   
-      <InGameHeader/>
+      <BlackjackHeader/>
 
       <PlayButtons/>
 

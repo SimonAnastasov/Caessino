@@ -7,7 +7,7 @@ import { HiOutlineArrowNarrowRight } from 'react-icons/hi'
 import axios from 'axios'
 
 import { setBlackjack, setStyle } from '../redux/reducers/styleSlice'
-import { setGame, setPlayer } from '../redux/reducers/playerSlice'
+import { setGame } from '../redux/reducers/playerSlice'
 
 const Alert = () => {
     const playerState = useSelector(state => state.player)

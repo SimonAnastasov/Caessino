@@ -79,12 +79,18 @@ header.header {
       list-style-type: none;
 
       li {
-        cursor: pointer;
-
         margin-right: 4rem;
 
         &:last-child {
           margin-right: 0;
+        }
+      }
+    }
+
+    &.mainHeaderNavigation {
+      ul {
+        li {
+          cursor: pointer;
         }
       }
     }
@@ -342,6 +348,9 @@ header.header {
     
     &>input {
       margin-bottom: 2rem;
+
+      padding-left: 4px;
+      padding-right: 4px;
       
       font-size: 2rem;
     }

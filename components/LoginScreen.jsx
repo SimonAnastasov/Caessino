@@ -2,16 +2,33 @@ import React from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 
+import { useRef } from 'react'
+
 import { setPlayer } from '../redux/reducers/playerSlice';
 import { setStyle } from '../redux/reducers/styleSlice';
 
 import axios from 'axios';
 
 const LoginScreen = () => {
+    const ref = useRef(null);
+
     const dispatch = useDispatch();
 
     const playerState = useSelector(state => state.player);
     const styleState = useSelector(state => state.style);
+
+    setTimeout(() => {
+        if (styleState.style.displayLoginScreen && styleState.style.loginScreenInfo.setFocus) {
+            ref.current.focus();
+            dispatch(setStyle({
+                ...styleState.style,
+                loginScreenInfo: {
+                    ...styleState.style.loginScreenInfo,
+                    setFocus: false
+                }
+            }))
+        }
+    }, 10);
 
     function onChangeUsername(e) {
         dispatch(setStyle({
@@ -33,6 +50,12 @@ const LoginScreen = () => {
         }))
     }
 
+    function keyUp(e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    }
+
     function closeForm() {
         dispatch(setStyle({
             ...styleState.style,
@@ -43,8 +66,8 @@ const LoginScreen = () => {
             },
             inlineAlertText: '',
         }));
-    }
 
+    }
     function login() {
         dispatch(setStyle({
             ...styleState.style,
@@ -118,9 +141,9 @@ const LoginScreen = () => {
                 {styleState.style.inlineAlertText.length > 0 && <span className="inlineAlert" onClick={(e) => checkForLink(e)}>{styleState.style.inlineAlertText}</span>}
                 <div>
                     <span>Username:</span>
-                    <input type="text" onChange={(e) => {onChangeUsername(e)}} value={styleState.style.loginScreenInfo.username}/>
+                    <input ref={ref} type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.username} placeholder="your username..."/>
                     <span>Password:</span>
-                    <input type="password" onChange={(e) => {onChangePassword(e)}} value={styleState.style.loginScreenInfo.password}/>
+                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.password} placeholder="your password..."/>
                     <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <button className="primaryButton" onClick={() => closeForm()}>Close Form</button>
                         <button className="secondaryButton" onClick={() => login()}>Log In</button>

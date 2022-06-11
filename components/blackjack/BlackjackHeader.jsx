@@ -6,15 +6,15 @@ import { useRouter } from 'next/router'
 
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { setGame, setPlayer } from '../redux/reducers/playerSlice'
-import { setBlackjack, setStyle } from '../redux/reducers/styleSlice'
+import { setGame, setPlayer } from '../../redux/reducers/playerSlice'
+import { setBlackjack, setStyle } from '../../redux/reducers/styleSlice'
 
 import axios from 'axios';
 
-const InGameHeader = () => {
+const BlackjackHeader = () => {
     const dispatch = useDispatch();
 
     const router = useRouter();
@@ -266,4 +266,4 @@ const InGameHeader = () => {
     )
 }
 
-export default InGameHeader
+export default BlackjackHeader

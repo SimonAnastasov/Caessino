@@ -1,10 +1,9 @@
 version: "3.7"
 services:
   db:
-    # image: postgres
     build:
       context: .
-      dockerfile: db.Dockerfile
+      dockerfile: docker_db.Dockerfile
     restart: always
     ports:
       - 4321:5432
@@ -17,7 +16,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: server.Dockerfile
+      dockerfile: docker_server.Dockerfile
     restart: always
     ports:
       - 3000:3000

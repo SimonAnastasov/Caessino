@@ -2,9 +2,7 @@ import React from 'react'
 
 import Link from 'next/link'
 
-import { useRouter } from 'next/router'
-
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setPlayer } from '../redux/reducers/playerSlice'
@@ -22,6 +20,10 @@ const Header = () => {
     dispatch(setStyle({
       ...styleState.style,
       displayRegisterScreen: true,
+      registerScreenInfo: {
+        ...styleState.style.registerScreenInfo,
+        setFocus: true
+      }
     }))
   }
 
@@ -29,6 +31,10 @@ const Header = () => {
     dispatch(setStyle({
       ...styleState.style,
       displayLoginScreen: true,
+      loginScreenInfo: {
+        ...styleState.style.loginScreenInfo,
+        setFocus: true
+      }
     }))
   }
 
@@ -127,7 +133,7 @@ const Header = () => {
           
         </div>
       </Link>
-      <nav>
+      <nav className='mainHeaderNavigation'>
           <ul>
             {playerState.player.displayName === '' || playerState.player.displayName === 'Guest' ? (
               <>
