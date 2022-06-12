@@ -258,7 +258,7 @@ const BlackjackHeader = () => {
             </Link>
             <nav>
                 <ul>
-                    <li>Hi{playerState?.player?.displayName ? `, ${playerState.player.displayName}` : ``}</li>
+                    <li>Hi, {playerState?.player?.displayName}</li>
                     <li>Balance: ${playerState?.player?.credits}</li>
                 </ul>
             </nav>

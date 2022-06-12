@@ -12,15 +12,7 @@ const pool = new Pool({
 });
 
 const sessions = []
-// example session
-// const session = {
-//   id,
-//   displayName,
-//   username,
-//   credits,
-//   lastActivity,
-// }
-
+// example session = { id, displayName, username, credits, lastActivity }
 
 export default function handler(req, res) {
   /**
@@ -29,6 +21,8 @@ export default function handler(req, res) {
   if (req.method === 'GET') {
     /**
      * /---------------------- GET ----------------------/
+     * If the player won credits, update them in the database.
+     * Also, update the stats in the database.
      * @action give_credits
      * @param session_id
      * @param credits
@@ -94,6 +88,7 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * The player lost credits, update this in the database.
      * @action take_credits
      * @param session_id
      * @param credits
@@ -137,6 +132,7 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Get stats for the player, so we can display them in the front end.
      * @action get_stats
      * @param session_id
      */
@@ -173,6 +169,8 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Returns the player's room, if the player was in one.
+     * Same as the one below, but this one is used in a game-specific context.
      * @action get_player_info_on_enter
      * @param session_id
      */
@@ -197,6 +195,8 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Returns the player's room, if the player was in one.
+     * Same as the one above, but this one is used in a general context.
      * @action check_if_logged_in
      * @param session_id
      */
@@ -221,6 +221,8 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Takes the credits in the player's session, and updates the database.
+     * Logs the player out and kills the session.
      * @action logout
      * @param session_id
      */
@@ -253,6 +255,7 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- POST ----------------------/
+     * Checks if the entered account info is good, and registers a new user in the database if so.
      * @action register
      * @param username
      * @param displayName
@@ -338,6 +341,7 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- POST ----------------------/
+     * Checks if the entered account info is good, and logs the user in if so.
      * @action login
      * @param username
      * @param password
@@ -431,12 +435,5 @@ export default function handler(req, res) {
         }
       });
     }
-  }
-
-  /**
-   * PUT method
-   */
-  if (req.method === 'PUT') {
-
   }
 }

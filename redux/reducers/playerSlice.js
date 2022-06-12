@@ -13,18 +13,6 @@ const initialState = {
         dealerCards: [],
         status: '',
         sideBetName: '',
-    },
-    stats: {
-        wins: {
-            blackjack: 0,
-            roulette: 0,
-            poker: 0,
-        },
-        games: {
-            blackjack: 0,
-            roulette: 0,
-            poker: 0,
-        }
     }
 }
 
@@ -38,12 +26,9 @@ export const playerSlice = createSlice({
         setGame: (state, action) => {
             state.game = action.payload;
         },
-        setStats: (state, action) => {
-            state.stats = action.payload;
-        }
     }
 })
 
-export const { setPlayer, setGame, setStats } = playerSlice.actions
+export const { setPlayer, setGame } = playerSlice.actions
 
 export default playerSlice.reducer
