@@ -254,18 +254,23 @@ export default async function handler(req, res) {
             return ;
         }
 
-        const room = rooms[session_id];
+        axios.get(`${process.env.HOME_URL}/api/postgre?action=take_credits&session_id=${session_id}&credits=${req.query.bet}`).then(postgreRes => {
+          if (postgreRes.data?.success) {
+            const room = rooms[session_id];
 
-        room.sideBet = parseInt(req.query.bet);
-        room.sideBetName = req.query.betName;
-        room.status = '_3_made_side_bet';
+            room.sideBet = parseInt(req.query.bet);
+            room.sideBetName = req.query.betName;
+            room.status = '_3_made_side_bet';
 
-        rooms[session_id] = room;
+            rooms[session_id] = room;
 
-        res.json({
-          success: true,
-          status: rooms[session_id].status,
-        })
+            res.json({
+              success: true,
+              status: rooms[session_id].status,
+              credits: postgreRes.data?.credits,
+            })
+          }
+        });
         
         return ;
       }
@@ -288,17 +293,27 @@ export default async function handler(req, res) {
       if (rooms[session_id] !== undefined && rooms[session_id].status.substr(1, 1) === '1') {
         if (parseInt(req.query.bet) <= 0) return ;
 
-        const room = rooms[session_id];
+        axios.get(`${process.env.HOME_URL}/api/postgre?action=take_credits&session_id=${session_id}&credits=${req.query.bet}`).then(postgreRes => {
+          if (postgreRes.data?.success) {
+            const room = rooms[session_id];
 
-        room.initialBet = parseInt(req.query.bet);
-        room.status = '_2_made_initial_bet';
+            room.initialBet = parseInt(req.query.bet);
+            room.status = '_2_made_initial_bet';
 
-        rooms[session_id] = room;
+            rooms[session_id] = room;
 
-        res.json({
-          success: true,
-          status: rooms[session_id].status,
-        })
+            res.json({
+              success: true,
+              status: rooms[session_id].status,
+              credits: postgreRes.data?.credits,
+            })
+          }
+          else {
+            res.json({
+              success: false,
+            })
+          }
+        });
 
         return ;
       }
@@ -336,39 +351,51 @@ export default async function handler(req, res) {
     if (req.query.action === 'get_player_info_on_enter' && req.query?.session_id) {
       const session_id = req.query.session_id;
 
-      if (rooms[session_id] !== undefined) {
-
-      }
-      else {
-        createARoom(session_id);
-      }
-
-      let dealerCardsTmp = [];
-      if (rooms[session_id].status.substr(1, 1) != '5') { // 5 == game_over
-        rooms[session_id].dealerCards.forEach((card, i) => {
-          if (i === 0) {
-            dealerCardsTmp.push(card);
+      axios.get(`${process.env.HOME_URL}/api/postgre?action=check_if_logged_in&session_id=${session_id}`).then(postgreRes => {
+        if (postgreRes.data?.success) {
+          if (rooms[session_id] !== undefined) {
+            // room exists
           }
           else {
-            dealerCardsTmp.push('back');
+            createARoom(session_id);
           }
-        })
-      }
-      else {
-        dealerCardsTmp = rooms[session_id].dealerCards;
-      }
-
-      res.json({
-        success: true,
-        status: rooms[session_id].status,
-        initialBet: rooms[session_id].initialBet,
-        sideBet: rooms[session_id].sideBet,
-        sideBetName: rooms[session_id].sideBetName,
-        playerCards: rooms[session_id].playerCards,
-        dealerCards: dealerCardsTmp,
-        outcome: rooms[session_id].outcome,
-        earnings: rooms[session_id].earnings,
-      })
+    
+          let dealerCardsTmp = [];
+          if (rooms[session_id].status.substr(1, 1) != '5') { // 5 == game_over
+            rooms[session_id].dealerCards.forEach((card, i) => {
+              if (i === 0) {
+                dealerCardsTmp.push(card);
+              }
+              else {
+                dealerCardsTmp.push('back');
+              }
+            })
+          }
+          else {
+            dealerCardsTmp = rooms[session_id].dealerCards;
+          }
+    
+          res.json({
+            success: true,
+            status: rooms[session_id].status,
+            initialBet: rooms[session_id].initialBet,
+            sideBet: rooms[session_id].sideBet,
+            sideBetName: rooms[session_id].sideBetName,
+            playerCards: rooms[session_id].playerCards,
+            dealerCards: dealerCardsTmp,
+            outcome: rooms[session_id].outcome,
+            earnings: rooms[session_id].earnings,
+            displayName: postgreRes.data?.displayName,
+            session_id: postgreRes.data?.session_id,
+            credits: postgreRes.data?.credits,
+          })
+        }
+        else {
+          res.json({
+            success: false,
+          })
+        }
+      });
     }
   }
 }

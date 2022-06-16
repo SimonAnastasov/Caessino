@@ -169,34 +169,7 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
-     * Returns the player's room, if the player was in one.
-     * Same as the one below, but this one is used in a game-specific context.
-     * @action get_player_info_on_enter
-     * @param session_id
-     */
-    if (req.query?.action === 'get_player_info_on_enter' && req.query?.session_id) {
-      const session_id = req.query.session_id
-      const session = sessions.find(session => session.id === session_id)
-
-      if (session) {
-        res.json({
-          success: true,
-          displayName: session.displayName,
-          session_id: session.id,
-          credits: session.credits,
-        })
-        return ;
-      }
-
-      res.json({
-        success: false,
-      })
-    }
-
-    /**
-     * /---------------------- GET ----------------------/
-     * Returns the player's room, if the player was in one.
-     * Same as the one above, but this one is used in a general context.
+     * Checks if the player is logged in, and returns his session if so.
      * @action check_if_logged_in
      * @param session_id
      */

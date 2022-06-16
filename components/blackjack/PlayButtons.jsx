@@ -43,30 +43,26 @@ const PlayButtons = () => {
     }
 
     function placeInitialBetClicked() {
-        axios.get(`/api/postgre?action=take_credits&session_id=${localStorage.CAESSINO_SESSION_ID}&credits=${styleState.blackjack.inputControls.initialBet.chosenCredits}`).then(postgreRes => {
-            if (postgreRes.data?.success) {
-                axios.get(`/api/blackjack?action=make_initial_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.initialBet.chosenCredits}`).then(res => {
-                    if (res.data?.success) {
-                        dispatch(setGame({
-                            ...playerState.game,
-                            status: res.data?.status,
-                        }))
+        axios.get(`/api/blackjack?action=make_initial_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.initialBet.chosenCredits}`).then(res => {
+            if (res.data?.success) {
+                dispatch(setGame({
+                    ...playerState.game,
+                    status: res.data?.status,
+                }))
 
-                        dispatch(setPlayer({
-                            ...playerState.player,
-                            credits: postgreRes.data?.credits,
-                        }))
+                dispatch(setPlayer({
+                    ...playerState.player,
+                    credits: res.data?.credits,
+                }))
 
-                        dispatch(setBlackjack({
-                            ...styleState.blackjack,
-                            displays: {
-                                ...styleState.blackjack.displays,
-                                initialBet: false,
-                                sideBet: true,
-                            }
-                        }))
+                dispatch(setBlackjack({
+                    ...styleState.blackjack,
+                    displays: {
+                        ...styleState.blackjack.displays,
+                        initialBet: false,
+                        sideBet: true,
                     }
-                });
+                }))
             }
         });
     }
@@ -148,33 +144,29 @@ const PlayButtons = () => {
     }
 
     function placeSideBetClicked() {
-        axios.get(`/api/postgre?action=take_credits&session_id=${localStorage.CAESSINO_SESSION_ID}&credits=${styleState.blackjack.inputControls.sideBet.chosenCredits}`).then(postgreRes => {
-            if (postgreRes.data?.success) {
-                axios.get(`/api/blackjack?action=make_side_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.sideBet.chosenCredits}&betName=${playerState.game.sideBetName}`).then(res => {
-                    if (res.data?.success) {
-                        dispatch(setGame({
-                            ...playerState.game,
-                            status: res.data?.status,
-                        }))
+        axios.get(`/api/blackjack?action=make_side_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.sideBet.chosenCredits}&betName=${playerState.game.sideBetName}`).then(res => {
+            if (res.data?.success) {
+                dispatch(setGame({
+                    ...playerState.game,
+                    status: res.data?.status,
+                }))
 
-                        dispatch(setPlayer({
-                            ...playerState.player,
-                            credits: postgreRes.data?.credits,
-                        }))
+                dispatch(setPlayer({
+                    ...playerState.player,
+                    credits: res.data?.credits,
+                }))
 
-                        dispatch(setBlackjack({
-                            ...styleState.blackjack,
-                            displays: {
-                                ...styleState.blackjack.displays,
-                                sideBetsChooseCreditsModal: false,
-                                sideBet: false,
-                                hitStand: true,
-                            }
-                        }))
-
-                        getCards();
+                dispatch(setBlackjack({
+                    ...styleState.blackjack,
+                    displays: {
+                        ...styleState.blackjack.displays,
+                        sideBetsChooseCreditsModal: false,
+                        sideBet: false,
+                        hitStand: true,
                     }
-                });
+                }))
+
+                getCards();
             }
         });
     }
