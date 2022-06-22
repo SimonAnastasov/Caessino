@@ -7,7 +7,7 @@ import { HiOutlineArrowNarrowRight } from 'react-icons/hi'
 import axios from 'axios'
 
 import { setBlackjack, setStyle } from '../redux/reducers/styleSlice'
-import { setGame } from '../redux/reducers/playerSlice'
+import { setBlackjackGame } from '../redux/reducers/playerSlice'
 
 const Alert = () => {
     const playerState = useSelector(state => state.player)
@@ -29,8 +29,8 @@ const Alert = () => {
         if (styleState.style.alert.button.action === 'play_again') {
             axios.get(`/api/blackjack?action=play_again&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
                 if (res.data?.success && res.data?.game) {
-                    dispatch(setGame({
-                        ...playerState.game,
+                    dispatch(setBlackjackGame({
+                        ...playerState.blackjackGame,
                         status: res.data.game?.status,
                         playerCards: res.data.game?.playerCards,
                         dealerCards: res.data.game?.dealerCards,

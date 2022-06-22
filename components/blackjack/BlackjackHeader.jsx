@@ -9,7 +9,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { setGame, setPlayer } from '../../redux/reducers/playerSlice'
+import { setBlackjackGame, setPlayer } from '../../redux/reducers/playerSlice'
 import { setBlackjack, setStyle } from '../../redux/reducers/styleSlice'
 
 import axios from 'axios';
@@ -49,8 +49,8 @@ const BlackjackHeader = () => {
                     credits: res.data?.credits,
                 }));
 
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                     playerCards: res.data?.playerCards,
                     dealerCards: res.data?.dealerCards,
@@ -223,7 +223,7 @@ const BlackjackHeader = () => {
                             ...styleState.blackjack.inputControls,
                             initialBet: {
                                 ...styleState.blackjack.inputControls.initialBet,
-                                chosenCredits: parseInt(postgreRes.data?.credits/2),
+                                chosenCredits: parseInt(res.data?.credits/2),
                             }
                         },
                     }))

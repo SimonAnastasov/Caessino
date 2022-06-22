@@ -1,19 +1,10 @@
 import React from 'react'
-
-import Header from '../../components/Header'
-import FullwidthText from '../../components/FullwidthText'
-
-import Head from 'next/head'
+import Roulette from '../../components/roulette/Roulette'
 
 const roulette = () => {
   return (
     <div className="app">
-      <Head>
-        <title>Caessino - Roulette</title>
-      </Head>
-  
-      <Header main="false"/>
-      <FullwidthText title="Roulette" subtitle="Under Construction..."/>
+      <Roulette/>
     </div>
   )
 }

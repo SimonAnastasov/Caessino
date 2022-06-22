@@ -21,10 +21,10 @@ const Cards = () => {
 
   return (
     <div className="blackjackCards">
-      {playerState?.game?.playerCards?.map((card, i) => (
+      {playerState?.blackjackGame?.playerCards?.map((card, i) => (
         <Card key={card} card={card} rotateZ={i*splitCardsMultiplyByInt} pos={{left: playerPos.left+i*splitCardsMultiplyByInt, top: playerPos.top}}/>
       ))}
-      {playerState?.game?.dealerCards?.map((card, i) => (
+      {playerState?.blackjackGame?.dealerCards?.map((card, i) => (
         <Card key={card} card={card} rotateZ={i*splitCardsMultiplyByInt} pos={{left: dealerPos.left+i*splitCardsMultiplyByInt, top: dealerPos.top}}/>
       ))}
     </div>

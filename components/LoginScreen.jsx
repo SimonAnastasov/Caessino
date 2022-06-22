@@ -76,8 +76,10 @@ const LoginScreen = () => {
 
         axios.post(`/api/postgre`, {
             action: 'login',
-            username: styleState.style.loginScreenInfo.username,
-            password: styleState.style.loginScreenInfo.password,
+            username: 'drama',
+            password: 'drama'
+            // username: styleState.style.loginScreenInfo.username,
+            // password: styleState.style.loginScreenInfo.password,
         })
             .then(res => {
                 if (res.data?.success) {

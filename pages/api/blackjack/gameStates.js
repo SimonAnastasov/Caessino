@@ -11,7 +11,7 @@ const deck = singleDeck.concat(singleDeck).concat(singleDeck).concat(singleDeck)
  */
 export let game = {
   deck: [...deck],
-  status: '_1_room_created',
+  status: '_1_room_created',      // statuses: _1_room_created, _2_made_initial_bet, _3_made_side_bet, _4_cards_on_the_table, _5_game_over
   playerCards: [],
   dealerName: 'Lazar',
   dealerCards: [],

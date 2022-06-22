@@ -3,7 +3,7 @@ import React from 'react'
 import { GiTwoCoins, GiReturnArrow, GiCardDraw } from 'react-icons/gi'
 import { AiFillCheckCircle } from 'react-icons/ai'
 
-import { setGame, setPlayer } from '../../redux/reducers/playerSlice';
+import { setBlackjackGame, setPlayer } from '../../redux/reducers/playerSlice';
 import { setBlackjack, setStyle } from '../../redux/reducers/styleSlice';
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -45,8 +45,8 @@ const PlayButtons = () => {
     function placeInitialBetClicked() {
         axios.get(`/api/blackjack?action=make_initial_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.initialBet.chosenCredits}`).then(res => {
             if (res.data?.success) {
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                 }))
 
@@ -123,8 +123,8 @@ const PlayButtons = () => {
     function selectedSideBet(e, sideBetName) {
         const texts = splitTexts(e.target.innerHTML);
 
-        dispatch(setGame({
-            ...playerState.game,
+        dispatch(setBlackjackGame({
+            ...playerState.blackjackGame,
             sideBetName: sideBetName
         }))
 
@@ -144,10 +144,10 @@ const PlayButtons = () => {
     }
 
     function placeSideBetClicked() {
-        axios.get(`/api/blackjack?action=make_side_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.sideBet.chosenCredits}&betName=${playerState.game.sideBetName}`).then(res => {
+        axios.get(`/api/blackjack?action=make_side_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&bet=${styleState.blackjack.inputControls.sideBet.chosenCredits}&betName=${playerState.blackjackGame.sideBetName}`).then(res => {
             if (res.data?.success) {
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                 }))
 
@@ -200,8 +200,8 @@ const PlayButtons = () => {
     function getCards() {
         axios.get(`/api/blackjack?action=get_initial_cards&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                     playerCards: res.data?.playerCards,
                     dealerCards: res.data?.dealerCards,
@@ -209,8 +209,8 @@ const PlayButtons = () => {
 
                 if (res.data?.sideBetOutcome !== '') {
                     if (res.data.sideBetOutcome === 'side_bet_won') {
-                        dispatch(setGame({
-                            ...playerState.game,
+                        dispatch(setBlackjackGame({
+                            ...playerState.blackjackGame,
                             credits: res.data?.credits,
                         }))
                         
@@ -249,8 +249,8 @@ const PlayButtons = () => {
     function hitClicked() {
         axios.get(`/api/blackjack?action=hit_a_card&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                     playerCards: res.data?.playerCards,
                 }))
@@ -283,8 +283,8 @@ const PlayButtons = () => {
     function standClicked() {
         axios.get(`/api/blackjack?action=stand&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
-                dispatch(setGame({
-                    ...playerState.game,
+                dispatch(setBlackjackGame({
+                    ...playerState.blackjackGame,
                     status: res.data?.status,
                     playerCards: res.data?.playerCards,
                     dealerCards: res.data?.dealerCards,

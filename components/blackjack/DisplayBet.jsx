@@ -6,8 +6,8 @@ const DisplayBet = () => {
   const playerState = useSelector(state => state.player);
   const styleState = useSelector(state => state.style);
 
-  let display = parseInt(playerState.game.status.substr(1, 1)) >= 2 ? 'block' : 'none';
-  let displaySideBet = ( parseInt(playerState.game.status.substr(1, 1)) >= 3 && parseInt(styleState.blackjack.inputControls.sideBet.chosenCredits) > 0 ) ? 'block' : 'none';
+  let display = parseInt(playerState.blackjackGame.status.substr(1, 1)) >= 2 ? 'block' : 'none';
+  let displaySideBet = ( parseInt(playerState.blackjackGame.status.substr(1, 1)) >= 3 && parseInt(styleState.blackjack.inputControls.sideBet.chosenCredits) > 0 ) ? 'block' : 'none';
 
   return (
     <div className="blackjackDisplayBet" style={{display: display}}>

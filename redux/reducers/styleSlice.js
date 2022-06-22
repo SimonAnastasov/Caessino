@@ -79,6 +79,22 @@ const initialState = {
             sideBetsChooseCreditsText: '',
             sideBetsPaysText: '',
         }
+    },
+    // roulette
+    roulette: {
+        displays: {
+            betModal: false,
+        },
+        inputControls: {
+            bet: {
+                chosenCredits: 0,
+            },
+        },
+        whichBets: [],
+        coinPlaced: {
+            x: 0,
+            y: 0,
+        }
     }
 }
 
@@ -91,10 +107,13 @@ export const styleSlice = createSlice({
         },
         setBlackjack: (state, action) => {
             state.blackjack = action.payload;
+        },
+        setRoulette: (state, action) => {
+            state.roulette = action.payload;
         }
     }
 })
 
-export const { setStyle, setBlackjack } = styleSlice.actions
+export const { setStyle, setBlackjack, setRoulette } = styleSlice.actions
 
 export default styleSlice.reducer

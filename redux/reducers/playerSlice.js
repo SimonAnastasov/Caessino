@@ -8,11 +8,16 @@ const initialState = {
         room_id: '',
         credits: 0,
     },
-    game: {
+    blackjackGame: {
+        status: '',
         playerCards: [],
         dealerCards: [],
-        status: '',
         sideBetName: '',
+    },
+    rouletteGame: {
+        status: '',
+        timeToStart: 0,
+        players: [],
     }
 }
 
@@ -23,12 +28,15 @@ export const playerSlice = createSlice({
         setPlayer: (state, action) => {
             state.player = action.payload;
         },
-        setGame: (state, action) => {
-            state.game = action.payload;
+        setBlackjackGame: (state, action) => {
+            state.blackjackGame = action.payload;
+        },
+        setRouletteGame: (state, action) => {
+            state.rouletteGame = action.payload;
         },
     }
 })
 
-export const { setPlayer, setGame } = playerSlice.actions
+export const { setPlayer, setBlackjackGame, setRouletteGame } = playerSlice.actions
 
 export default playerSlice.reducer

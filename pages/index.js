@@ -20,7 +20,7 @@ export default function Home() {
         <meta name="keywords" content="caessino, e-casino, casino, blackjack, roulette, poker"/>
 
         <meta name="author" content="ESS" />
-        <meta name="copyright" content="ESS CORP 2022 &copy;" />
+        <meta name="copyright" content="&copy; ESS CORP 2022" />
 
         <title>Caessino</title>
       </Head>
