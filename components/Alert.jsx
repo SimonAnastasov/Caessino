@@ -9,7 +9,7 @@ import axios from 'axios'
 import { setBlackjack, setStyle } from '../redux/reducers/styleSlice'
 import { setBlackjackGame } from '../redux/reducers/playerSlice'
 
-const Alert = () => {
+const Alert = ({ onTop = false }) => {
     const playerState = useSelector(state => state.player)
     const styleState = useSelector(state => state.style)
 
@@ -74,7 +74,7 @@ const Alert = () => {
     }
 
     return (
-        <div className="alert" style={{display: display}}>
+        <div className="alert" style={{display: display, top: `${onTop ? '35vh' : '50vh'}`}}>
             <h1>{styleState.style.alert.title}</h1>
             <h3>{styleState.style.alert.subtitle}</h3>
             <button className='primaryButton' onClick={() => clicked()}>{styleState.style.alert.button.text} <HiOutlineArrowNarrowRight style={{marginTop: '3px', marginBottom: '-3px'}} /></button>

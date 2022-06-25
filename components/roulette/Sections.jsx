@@ -16,7 +16,7 @@ const Sections = () => {
 
         <CoinOnTable/>
 
-        <img id="rouletteWheelImg" src="/images/roulette-wheel.png" alt="Roulette wheel"/>
+        <img id="rouletteWheelImg" src="/images/roulette-wheel.png" alt="Roulette wheel" style={{transform: 'translate(-50%, -50%)'}}/>
 
         <PlayersDisplay/>
 

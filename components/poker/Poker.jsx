@@ -6,6 +6,7 @@ import PokerHeader from './PokerHeader'
 import Loading from '../Loading'
 import Alert from '../Alert'
 import Notification from '../Notification'
+import PokerSections from './PokerSections'
 
 const Poker = () => {
   return (
@@ -13,6 +14,8 @@ const Poker = () => {
       <Head>
         <title>Caessino - Poker</title>
       </Head>
+
+      <PokerSections/>
 
       <PokerHeader/>
 

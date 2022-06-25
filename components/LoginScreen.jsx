@@ -76,18 +76,14 @@ const LoginScreen = () => {
 
         axios.post(`/api/postgre`, {
             action: 'login',
-            username: 'drama',
-            password: 'drama'
-            // username: styleState.style.loginScreenInfo.username,
-            // password: styleState.style.loginScreenInfo.password,
+            // username: 'drama',
+            // password: 'drama'
+            username: styleState.style.loginScreenInfo.username,
+            password: styleState.style.loginScreenInfo.password,
         })
             .then(res => {
                 if (res.data?.success) {
                     localStorage.CAESSINO_SESSION_ID = res.data?.session?.id;
-                    dispatch(setStyle({
-                        ...styleState.style,
-                        displayLoginScreen: false,
-                    }));
 
                     dispatch(setPlayer({
                         ...playerState.player,
@@ -110,6 +106,7 @@ const LoginScreen = () => {
                             text: 'Successfully logged in.',
                             status: 'success',
                         },
+                        inlineAlertText: '',
                     }));
                 }
                 else {

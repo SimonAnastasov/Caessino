@@ -69,6 +69,18 @@ export default function handler(req, res) {
                   });
                 }
               }
+              else if (req.query?.game === 'roulette') {
+                if (req.query?.outcome === 'lost') {
+                  pool.query('UPDATE stats SET roulette_games = $1 WHERE username = $2', [parseInt(stats.roulette_games) + 1, session.username], (error, results) => {
+                    if (error) throw error;
+                  });
+                }
+                else if (req.query?.outcome === 'won') {
+                  pool.query('UPDATE stats SET roulette_games = $1, roulette_won_games = $2 WHERE username = $3', [parseInt(stats.roulette_games) + 1, parseInt(stats.roulette_won_games) + 1, session.username], (error, results) => {
+                    if (error) throw error;
+                  });
+                }
+              }
             }
           });
         }

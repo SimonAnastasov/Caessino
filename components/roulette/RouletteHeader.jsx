@@ -48,23 +48,14 @@ const RouletteHeader = () => {
                             ...styleState.roulette.inputControls.bet,
                             chosenCredits: parseInt(res.data?.credits/2),
                         }
-                    }
+                    },
+                    showCoin: false,
                 }));
 
                 dispatch(setStyle({
                     ...styleState.style,
                     displayLoadingScreen: false,
                 }))
-
-
-                if (parseInt(res.data?.game.status.toString().substr(1, 1)) == 3) {
-                }
-
-                if (parseInt(res.data?.game.status.toString().substr(1, 1)) == 2) {
-                }
-
-                if (parseInt(res.data?.game.status.toString().substr(1, 1)) == 1) {
-                }
             }
             else {
                 dispatch(setStyle({

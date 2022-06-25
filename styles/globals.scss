@@ -8,6 +8,8 @@ body {
   //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   font-family: 'Inter', sans-serif;
+
+  overflow: hidden;
 }
 
 a {
@@ -134,6 +136,8 @@ header.header {
   * Similar to Full Width Text
   */
 .alert {
+  z-index: 30;
+
   width: 100vw;
   
   display: flex;
@@ -146,7 +150,6 @@ header.header {
   background-color: rgba(0, 0, 0, .9);
 
   position: absolute;
-  top: 50vh;
 
   transform: translateY(-70%);
   
@@ -781,7 +784,7 @@ header.header {
   top: 60%;
   left: 18%;
 
-  transform: translate(-50%, -50%);
+  transition: all .5s ease-in-out;
   
   width: 450px;
   height: auto;
@@ -828,6 +831,12 @@ header.header {
   left: calc(18.5%);
 
   transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
   
   font-size: 2.5rem;
 
@@ -866,6 +875,52 @@ header.header {
 }
 
 /**
+  * Spin effect on the roulette wheel
+  */
+.spin {
+  animation: spinner 4s infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes spinner {
+  0% {
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  10% {
+    transform: translate(-50%, -50%) rotateZ(calc(20 * 360deg));
+  }
+  20% {
+    transform: translate(-50%, -50%) rotateZ(calc(38 * 360deg));
+  }
+  30% {
+    transform: translate(-50%, -50%) rotateZ(calc(54 * 360deg));
+  }
+  40% {
+    transform: translate(-50%, -50%) rotateZ(calc(78 * 360deg));
+  }
+  50% {
+    transform: translate(-50%, -50%) rotateZ(calc(90 * 360deg));
+  }
+  60% {
+    transform: translate(-50%, -50%) rotateZ(calc(100 * 360deg));
+  }
+  70% {
+    transform: translate(-50%, -50%) rotateZ(calc(108 * 360deg));
+  }
+  80% {
+    transform: translate(-50%, -50%) rotateZ(calc(116 * 360deg));
+  }
+  90% {
+    transform: translate(-50%, -50%) rotateZ(calc(120 * 360deg));
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateZ(calc(122 * 360deg));
+  }
+}
+
+/**
   * File <- Poker Main
   */
-
+.pokerMainContainer {
+  
+}

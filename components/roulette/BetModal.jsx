@@ -51,10 +51,7 @@ const BetModal = () => {
                   ...styleState.roulette.displays,
                   betModal: false,
                 },
-                coinPlaced: {
-                  x: 0,
-                  y: 0
-                }
+                showCoin: false,
               }))
         }
         else {
@@ -63,13 +60,14 @@ const BetModal = () => {
                 displays: {
                     ...styleState.roulette.displays,
                     betModal: false,
-                }
+                },
+                showCoin: true,
             }));
         }
     }
 
     return (
-        <div className="rouletteBetModal" style={{display: styleState.roulette.displays.betModal ? 'flex' : 'none'}}>
+        <div className="rouletteBetModal" style={{display: styleState.roulette.displays.betModal && playerState.rouletteGame.timeToStart > 10 ? 'flex' : 'none'}}>
             <p>You have chosen to bet on: <span>{styleState.roulette.whichBets.map((bet, i) => `${bet} `)}</span><br/>Please select the amount you will bet</p>
             <div>
                 <div>

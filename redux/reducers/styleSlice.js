@@ -82,6 +82,7 @@ const initialState = {
     },
     // roulette
     roulette: {
+        COUNTDOWN_FROM: 30,
         displays: {
             betModal: false,
         },
@@ -94,6 +95,24 @@ const initialState = {
         coinPlaced: {
             x: 0,
             y: 0,
+        },
+        showCoin: false,
+    },
+    // poker
+    poker: {
+        displays: {
+            raiseModal: false,
+        },
+        inputControls: {
+            raise: {
+                chosenCredits: 0,
+            }
+        },
+        callAmount: 0,
+        texts: {
+            text1: 'A new card has been dealt!',
+            text2: 'Player Pero\'s Turn (00:13)',
+            text3: 'Pero has disconnected. They have 30 seconds to reconnect.'
         }
     }
 }

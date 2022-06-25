@@ -21,7 +21,7 @@ const Roulette = () => {
 
       <Loading/>
 
-      <Alert/>
+      <Alert onTop="true"/>
 
       <Notification/>
     </div>

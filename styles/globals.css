@@ -4,6 +4,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: 'Inter', sans-serif;
+  overflow: hidden;
 }
 
 a {
@@ -130,6 +131,7 @@ header.header nav.mainHeaderNavigation ul li {
   * Similar to Full Width Text
   */
 .alert {
+  z-index: 30;
   width: 100vw;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -147,7 +149,6 @@ header.header nav.mainHeaderNavigation ul li {
   padding: 20px 0 25px 0;
   background-color: rgba(0, 0, 0, 0.9);
   position: absolute;
-  top: 50vh;
   -webkit-transform: translateY(-70%);
           transform: translateY(-70%);
   -webkit-transition: '.5s linear';
@@ -794,8 +795,8 @@ header.header nav.mainHeaderNavigation ul li {
   position: absolute;
   top: 60%;
   left: 18%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  -webkit-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
   width: 450px;
   height: auto;
 }
@@ -836,6 +837,20 @@ header.header nav.mainHeaderNavigation ul li {
   left: calc(18.5%);
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
   font-size: 2.5rem;
   color: black;
 }
@@ -871,6 +886,110 @@ header.header nav.mainHeaderNavigation ul li {
 .rouletteBetModal p span {
   font-size: 1.2rem;
   color: #ead24d;
+}
+
+/**
+  * Spin effect on the roulette wheel
+  */
+.spin {
+  -webkit-animation: spinner 4s infinite;
+          animation: spinner 4s infinite;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(0deg);
+            transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  10% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(20 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(20 * 360deg));
+  }
+  20% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(38 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(38 * 360deg));
+  }
+  30% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(54 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(54 * 360deg));
+  }
+  40% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(78 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(78 * 360deg));
+  }
+  50% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(90 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(90 * 360deg));
+  }
+  60% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(100 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(100 * 360deg));
+  }
+  70% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(108 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(108 * 360deg));
+  }
+  80% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(116 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(116 * 360deg));
+  }
+  90% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(120 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(120 * 360deg));
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(122 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(122 * 360deg));
+  }
+}
+
+@keyframes spinner {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(0deg);
+            transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  10% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(20 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(20 * 360deg));
+  }
+  20% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(38 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(38 * 360deg));
+  }
+  30% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(54 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(54 * 360deg));
+  }
+  40% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(78 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(78 * 360deg));
+  }
+  50% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(90 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(90 * 360deg));
+  }
+  60% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(100 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(100 * 360deg));
+  }
+  70% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(108 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(108 * 360deg));
+  }
+  80% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(116 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(116 * 360deg));
+  }
+  90% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(120 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(120 * 360deg));
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotateZ(calc(122 * 360deg));
+            transform: translate(-50%, -50%) rotateZ(calc(122 * 360deg));
+  }
 }
 
 /**

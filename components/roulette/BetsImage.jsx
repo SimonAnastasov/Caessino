@@ -49,7 +49,7 @@ const BetsImage = () => {
 
     return (
         <>
-            <img id="rouletteBetsImg" src="/images/roulette-bets.png" alt="Roulette bets" onClick={(e) => selectWhichBet(e)} style={{zIndex: 10}}/>
+            <img id="rouletteBetsImg" src="/images/roulette-bets.png" alt="Roulette bets" onClick={(e) => selectWhichBet(e)}/>
         </>
     )
 }
