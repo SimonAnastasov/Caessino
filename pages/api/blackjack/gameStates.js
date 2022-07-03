@@ -28,10 +28,10 @@ export let game = {
  * Replace deck if empty
  */
 function checkDeckSize(game) {
-    if (game.deck.length === 0) {
-      game.deck = [...deck];
-    }
+  if (game.deck.length === 0) {
+    game.deck = [...deck];
   }
+}
   
 /**
  * Draw a SINGLE random card

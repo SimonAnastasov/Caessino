@@ -137,7 +137,6 @@ export default async function handler(req, res) {
      * GET method
      */
     if (req.method === 'GET') {
-        
         /**
          * /---------------------- GET ----------------------/
          * Return to the user info for starting a new game.

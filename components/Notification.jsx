@@ -23,6 +23,12 @@ const Notification = () => {
         }))
     }
 
+    if (styleState.style.notification.show === true) {
+        setTimeout(() => {
+            close();
+        }, 3000);
+    }
+
     return (
         <div className="notification" style={{display: display, backgroundColor: bg}}>
             <AiOutlineClose onClick={() => close()}/>

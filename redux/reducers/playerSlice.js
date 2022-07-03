@@ -20,33 +20,37 @@ const initialState = {
         players: [],
     },
     pokerGame: {
-        status: '_1_waiting_for_players',
-        turnIdx: 0,
-        playerCards: ['c4', 'c2'],
-        cardsOnTable: ['c3', 'c1', 'c5'],
-        players: [
-            {
-                status: 'disconnected',
-                displayName: 'Pero',
-                betAmount: 33,
-            },
-            {
-                status: 'playing',
-                displayName: 'Johnny',
-                betAmount: 29,
-            },
-            {
-                status: 'onTurn',
-                displayName: 'Waterlo',
-                betAmount: 199,
-            },
-        ]
-    }
-    // pokerGame: {
-    //     status: '',
-    //     turnIdx: 0,
-    //     players: [],
-    // }
+        tables: [],
+        table: {
+            id: '',
+            name: '',
+            status: '',
+            creator: '',
+            started: false,
+            round: 0,
+            turnIdx: 0,
+            lastBet: 0,
+            turnsSinceLastBet: 0,
+            players: [{
+                id: '',
+                table: '',
+                status: '',
+                displayName: '',
+                cards: [],
+                betAmount: 0,
+                isSatDown: false,
+                iSCoordinator: false,
+            }],
+            cards: [],
+        },
+        player: {
+            status: '',
+            cards: [],
+            table: '',
+            isSatDown: false,
+            isCoordinator: false,
+        },
+    },
 }
 
 export const playerSlice = createSlice({
@@ -62,9 +66,12 @@ export const playerSlice = createSlice({
         setRouletteGame: (state, action) => {
             state.rouletteGame = action.payload;
         },
+        setPokerGame: (state, action) => {
+            state.pokerGame = action.payload;
+        },
     }
 })
 
-export const { setPlayer, setBlackjackGame, setRouletteGame } = playerSlice.actions
+export const { setPlayer, setBlackjackGame, setRouletteGame, setPokerGame } = playerSlice.actions
 
 export default playerSlice.reducer

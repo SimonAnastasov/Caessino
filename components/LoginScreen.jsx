@@ -76,8 +76,6 @@ const LoginScreen = () => {
 
         axios.post(`/api/postgre`, {
             action: 'login',
-            // username: 'drama',
-            // password: 'drama'
             username: styleState.style.loginScreenInfo.username,
             password: styleState.style.loginScreenInfo.password,
         })

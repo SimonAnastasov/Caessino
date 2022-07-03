@@ -57,6 +57,9 @@ header.header {
   margin: auto;
   margin-top: 20px;
 
+  position: relative;
+  z-index: 5;
+
   .logo {
     width: 80px;
     aspect-ratio: 1;
@@ -178,6 +181,8 @@ header.header {
   * Displayed fixed in the top right corner
   */
 .notification {
+  z-index: 30;
+
   position: fixed;
   top: 40px;
   right: 30px;
@@ -321,6 +326,8 @@ header.header {
 
   background: linear-gradient(to right, #0B932E, #097625);
   color: #ead24d;
+
+  z-index: 10;
 }
 
 .fs-centered {
@@ -630,21 +637,19 @@ header.header {
   }
 }
 
-.blackjackCards {
-  .card {    
-    aspect-ratio: 400/560;
-    height: 150px;
+.card {    
+  aspect-ratio: 400/560;
+  height: 150px;
 
-    background-size: contain;
+  background-size: contain;
 
-    position: absolute;
+  position: absolute;
 
-    transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
 
-    border-radius: 10px;
+  border-radius: 10px;
 
-    border: 1px solid black;
-  }
+  border: 1px solid black;
 }
 
 .blackjackDisplayBet {
@@ -922,5 +927,197 @@ header.header {
   * File <- Poker Main
   */
 .pokerMainContainer {
+  .pokerPickATableContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: #111;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+
+    .createATable {
+      &>input {
+        margin-bottom: 2rem;
   
+        padding-left: 4px;
+        padding-right: 4px;
+        
+        font-size: 1.5rem;
+
+        margin-right: 1rem;
+
+        border-radius: .5rem;
+      }
+    }
+
+    &>div:not(.createATable) {
+      &>h3 {
+        margin-bottom: 1rem;
+      }
+
+      &>div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+  
+        width: 100vw;
+        max-height: 45vh;
+        padding-block: 2rem;
+
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+        &>div {
+          box-shadow: 0 5px 25px #4d99eaaa;
+
+          width: 60vw;
+
+          padding: 1rem 3rem;
+          border-radius: .5rem;
+
+          cursor: pointer;
+
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          place-items: center;
+
+          transition: all .2s ease-out;
+
+          &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 35px #4d99eaaa;
+          }
+        }
+      }
+    }
+  }
+
+  .pokerChairsContainer {
+    .pokerChair {
+      position: absolute;
+
+      transform: translate(-50%, -50%);
+
+      width: 110px;
+      aspect-ratio: 1;
+
+      border-radius: 50%;
+
+      border: 5px solid #ead24daa;
+      background-color: black;
+
+      display: grid;
+      place-items: center;
+
+      font-size: .8rem;
+
+      &.onTurn {
+        border: 5px solid #ead24d;
+      }
+
+      &.folded {
+        border: 5px solid rgba(71, 64, 24, 0.667);
+      }
+
+      &>div {
+        p {
+          margin-block: 2px;
+        }
+      }
+
+      .pokerPlayerCardsContainer {
+        position: relative;
+
+        &>div {
+          position: absolute;
+          top: -2vh;
+
+          transform: translate(-50%, -50%);
+
+          display: flex;
+
+          .card {
+            height: 80px;
+
+            margin-inline: -1rem;
+
+            position: relative;
+
+            &:first-child {
+              transform: rotateZ(-5deg);
+            }
+            
+            &:last-child {
+              transform: rotateZ(5deg);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .pokerPlayButtonsContainer {
+    position: absolute;
+    top: 59vh;
+    left: 50vw;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+      min-width: 110px;
+    }
+  }
+
+  .cardsInTheMiddleContainer {
+    position: absolute;
+    top: 45vh;
+    left: 50vw;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    justify-content: center;
+
+    .card {
+      height: 130px;
+
+      position: relative;
+      margin-inline: 2px;
+    }
+  }
+
+  .pokerMessagesContainer {
+    position: absolute;
+    top: 5vh;
+    left: 50vw;
+
+    transform: translateX(-50%);
+
+    &>p:first-child {
+      font-style: italic;
+      color: #c1fbaa;
+    }
+
+    &>p:not(:first-child):not(:last-child) {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    &>p:last-child {
+      margin-top: .5rem;
+      color: #ccc;
+    }
+  }
 }

@@ -106,13 +106,14 @@ const initialState = {
         inputControls: {
             raise: {
                 chosenCredits: 0,
-            }
+            },
+            tableName: '',
         },
         callAmount: 0,
         texts: {
-            text1: 'A new card has been dealt!',
-            text2: 'Player Pero\'s Turn (00:13)',
-            text3: 'Pero has disconnected. They have 30 seconds to reconnect.'
+            text1: '',
+            text2: '',
+            text3: ''
         }
     }
 }
@@ -129,10 +130,13 @@ export const styleSlice = createSlice({
         },
         setRoulette: (state, action) => {
             state.roulette = action.payload;
+        },
+        setPoker: (state, action) => {
+            state.poker = action.payload;
         }
     }
 })
 
-export const { setStyle, setBlackjack, setRoulette } = styleSlice.actions
+export const { setStyle, setBlackjack, setRoulette, setPoker } = styleSlice.actions
 
 export default styleSlice.reducer

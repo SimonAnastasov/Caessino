@@ -50,6 +50,8 @@ header.header {
   width: 92vw;
   margin: auto;
   margin-top: 20px;
+  position: relative;
+  z-index: 5;
 }
 
 header.header .logo {
@@ -177,6 +179,7 @@ header.header nav.mainHeaderNavigation ul li {
   * Displayed fixed in the top right corner
   */
 .notification {
+  z-index: 30;
   position: fixed;
   top: 40px;
   right: 30px;
@@ -340,6 +343,7 @@ header.header nav.mainHeaderNavigation ul li {
   background: -webkit-gradient(linear, left top, right top, from(#0B932E), to(#097625));
   background: linear-gradient(to right, #0B932E, #097625);
   color: #ead24d;
+  z-index: 10;
 }
 
 .fs-centered > div {
@@ -654,7 +658,7 @@ header.header nav.mainHeaderNavigation ul li {
   margin-left: 30px;
 }
 
-.blackjackCards .card {
+.card {
   aspect-ratio: 400/560;
   height: 150px;
   background-size: contain;
@@ -995,4 +999,192 @@ header.header nav.mainHeaderNavigation ul li {
 /**
   * File <- Poker Main
   */
+.pokerMainContainer .pokerPickATableContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #111;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5rem;
+}
+
+.pokerMainContainer .pokerPickATableContainer .createATable > input {
+  margin-bottom: 2rem;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  border-radius: .5rem;
+}
+
+.pokerMainContainer .pokerPickATableContainer > div:not(.createATable) > h3 {
+  margin-bottom: 1rem;
+}
+
+.pokerMainContainer .pokerPickATableContainer > div:not(.createATable) > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 2rem;
+  width: 100vw;
+  max-height: 45vh;
+  padding-block: 2rem;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.pokerMainContainer .pokerPickATableContainer > div:not(.createATable) > div > div {
+  -webkit-box-shadow: 0 5px 25px #4d99eaaa;
+          box-shadow: 0 5px 25px #4d99eaaa;
+  width: 60vw;
+  padding: 1rem 3rem;
+  border-radius: .5rem;
+  cursor: pointer;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (minmax(0, 1fr))[4];
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+  place-items: center;
+  -webkit-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+.pokerMainContainer .pokerPickATableContainer > div:not(.createATable) > div > div:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  -webkit-box-shadow: 0 10px 35px #4d99eaaa;
+          box-shadow: 0 10px 35px #4d99eaaa;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair {
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 110px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 5px solid #ead24daa;
+  background-color: black;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  font-size: .8rem;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair > div p {
+  margin-block: 2px;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair .pokerPlayerCardsContainer {
+  position: relative;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair .pokerPlayerCardsContainer > div {
+  position: absolute;
+  top: -2vh;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair .pokerPlayerCardsContainer > div .card {
+  height: 80px;
+  margin-inline: -1rem;
+  position: relative;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair .pokerPlayerCardsContainer > div .card:first-child {
+  -webkit-transform: rotateZ(-5deg);
+          transform: rotateZ(-5deg);
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair .pokerPlayerCardsContainer > div .card:last-child {
+  -webkit-transform: rotateZ(5deg);
+          transform: rotateZ(5deg);
+}
+
+.pokerMainContainer .pokerPlayButtonsContainer {
+  position: absolute;
+  top: 59vh;
+  left: 50vw;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 1rem;
+}
+
+.pokerMainContainer .pokerPlayButtonsContainer button {
+  min-width: 110px;
+}
+
+.pokerMainContainer .cardsInTheMiddleContainer {
+  position: absolute;
+  top: 45vh;
+  left: 50vw;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.pokerMainContainer .cardsInTheMiddleContainer .card {
+  height: 130px;
+  position: relative;
+  margin-inline: 2px;
+}
+
+.pokerMainContainer .pokerMessagesContainer {
+  position: absolute;
+  top: 5vh;
+  left: 50vw;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.pokerMainContainer .pokerMessagesContainer > p:first-child {
+  font-style: italic;
+  color: #c1fbaa;
+}
+
+.pokerMainContainer .pokerMessagesContainer > p:not(:first-child):not(:last-child) {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}
+
+.pokerMainContainer .pokerMessagesContainer > p:last-child {
+  margin-top: .5rem;
+  color: #ccc;
+}
 /*# sourceMappingURL=globals.css.map */
