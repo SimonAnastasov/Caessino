@@ -784,6 +784,13 @@ header.header nav.mainHeaderNavigation ul li {
   background-color: #006600;
 }
 
+#rouletteBall {
+  position: absolute;
+  top: 87.5%;
+  left: 17.5%;
+  width: 1rem;
+}
+
 #rouletteBetsImg {
   position: absolute;
   top: 65%;
@@ -888,6 +895,39 @@ header.header nav.mainHeaderNavigation ul li {
 }
 
 .rouletteBetModal p span {
+  font-size: 1.2rem;
+  color: #ead24d;
+}
+
+.pokerRaiseModal {
+  z-index: 20;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000c0;
+}
+
+.pokerRaiseModal p {
+  margin-bottom: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  -webkit-transition: all .25s linear;
+  transition: all .25s linear;
+}
+
+.pokerRaiseModal p span {
   font-size: 1.2rem;
   color: #ead24d;
 }
@@ -1092,6 +1132,16 @@ header.header nav.mainHeaderNavigation ul li {
   font-size: .8rem;
 }
 
+.pokerMainContainer .pokerChairsContainer .pokerChair.onTurn {
+  border: 5px dotted #ead24d;
+  background-color: #ead24d55;
+}
+
+.pokerMainContainer .pokerChairsContainer .pokerChair.folded {
+  border: 5px solid rgba(59, 59, 59, 0.667);
+  background-color: rgba(59, 59, 59, 0.667);
+}
+
 .pokerMainContainer .pokerChairsContainer .pokerChair > div p {
   margin-block: 2px;
 }
@@ -1126,9 +1176,17 @@ header.header nav.mainHeaderNavigation ul li {
           transform: rotateZ(5deg);
 }
 
+.pokerMainContainer .pokerPotContainer {
+  position: absolute;
+  top: 57vh;
+  left: 50vw;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
 .pokerMainContainer .pokerPlayButtonsContainer {
   position: absolute;
-  top: 59vh;
+  top: 62vh;
   left: 50vw;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);

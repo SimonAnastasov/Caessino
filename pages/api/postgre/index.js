@@ -81,6 +81,18 @@ export default function handler(req, res) {
                   });
                 }
               }
+              else if (req.query?.game === 'poker') {
+                if (req.query?.outcome === 'lost') {
+                  pool.query('UPDATE stats SET poker_games = $1 WHERE username = $2', [parseInt(stats.poker_games) + 1, session.username], (error, results) => {
+                    if (error) throw error;
+                  });
+                }
+                else if (req.query?.outcome === 'won') {
+                  pool.query('UPDATE stats SET poker_games = $1, poker_won_games = $2 WHERE username = $3', [parseInt(stats.poker_games) + 1, parseInt(stats.poker_won_games) + 1, session.username], (error, results) => {
+                    if (error) throw error;
+                  });
+                }
+              }
             }
           });
         }
@@ -109,10 +121,27 @@ export default function handler(req, res) {
       const session_id = req.query.session_id
       const session = sessions.find(session => session.id === session_id)
 
+      let takeWhatYouCan = false;
+      if (req.query?.takeWhatYouCan === "true") takeWhatYouCan = true;
+
       if (session) {
         session.lastActivity = Date.now();
 
-        session.credits = session.credits - parseInt(req.query.credits)
+        if (session.credits < parseInt(req.query.credits)) {
+          if (takeWhatYouCan) {
+            session.credits = 0;
+          }
+          else {
+            res.json({
+              success: false,
+            });
+
+            return ;
+          }
+        }
+        else {
+          session.credits = session.credits - parseInt(req.query.credits)
+        }
 
         pool.query('UPDATE players SET credits = $1 WHERE username = $2', [session.credits, session.username], (error, results) => {
           if (error) throw error;

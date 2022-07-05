@@ -22,20 +22,14 @@ const PokerHeader = () => {
     const playerState = useSelector(state => state.player);
     const styleState = useSelector(state => state.style);
 
-    useEffect(() => async function() {
+    useEffect(() => {
         // display loading screen
         dispatch(setStyle({
             ...styleState.style,
             displayLoadingScreen: true,
         }));
 
-        let interval = setInterval(() => {
-            axios.get(`/api/poker?action=update_state&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
-                if (res.data?.success) {
-                    dispatch(setPokerGame(res.data?.pokerGame))
-                }
-            });
-        }, 3000);
+        let interval;
 
         axios.get(`/api/poker?action=get_player_info_on_enter&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
@@ -50,6 +44,21 @@ const PokerHeader = () => {
                     ...styleState.style,
                     displayLoadingScreen: false,
                 }))
+
+                interval = setInterval(() => {
+                    axios.get(`/api/poker?action=update_state&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(newRes => {
+                        if (newRes.data?.success) {
+                            dispatch(setPokerGame(newRes.data?.pokerGame))
+        
+                            if (newRes.data?.pokerGame?.player?.credits !== playerState.player.credits && newRes.data?.pokerGame?.player?.credits > 0) {
+                                dispatch(setPlayer({
+                                    ...playerState.player,
+                                    credits: newRes.data?.pokerGame?.player?.credits,
+                                }))
+                            }
+                        }
+                    });
+                }, 2000);
             }
             else {
                 dispatch(setStyle({
@@ -65,17 +74,22 @@ const PokerHeader = () => {
                 router.push('/');
             }
         });
-        
-        return () => clearInterval(interval);
-    }, [playerState.pokerGame.player.table])
+    }, [])
+
+    function leaveTable() {
+        axios.get(`/api/poker?action=leave_table&session_id=${localStorage.CAESSINO_SESSION_ID}`);
+    }
 
     return (
         <header className="header">
-            <Link href="/" passHref>
-                <h2>
-                    <AiOutlineArrowLeft />
-                </h2>
-            </Link>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <Link href="/" passHref>
+                    <h2>
+                        <AiOutlineArrowLeft />
+                    </h2>
+                </Link>
+                { playerState.pokerGame.player.table.length > 0 && <button style={{marginBottom: '4px', marginLeft: '32px', fontSize: '16px'}} className="tertiaryButton" onClick={() => leaveTable()}>Leave Table</button> }
+            </div>
             <nav>
                 <ul>
                     <li>Hi, {playerState?.player?.displayName}</li>

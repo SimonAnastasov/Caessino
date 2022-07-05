@@ -8,6 +8,8 @@ import PlayButtons from './sections/PlayButtons'
 import PickATable from './sections/PickATable'
 
 import { useSelector, useDispatch } from 'react-redux'
+import Pot from './sections/Pot'
+import RaiseModal from './sections/RaiseModal'
 
 const PokerSections = () => {
   const playerState = useSelector(state => state.player);
@@ -23,7 +25,11 @@ const PokerSections = () => {
 
           <CardsInTheMiddle/>
 
+          <Pot/>
+
           <PlayButtons/>
+
+          <RaiseModal/>
       </>
     )
   }

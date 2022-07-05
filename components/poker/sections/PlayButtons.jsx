@@ -3,12 +3,13 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import axios from 'axios';
-import { setPokerGame } from '../../../redux/reducers/playerSlice';
+import { setPoker } from '../../../redux/reducers/styleSlice';
 
 const PlayButtons = () => {
   const dispatch = useDispatch();
 
   const playerState = useSelector(state => state.player);
+  const styleState = useSelector(state => state.style);
 
   function sitDown() {
     axios.get(`/api/poker?action=sit_down&session_id=${localStorage.CAESSINO_SESSION_ID}&tableId=${playerState.pokerGame.player.table}`);
@@ -19,7 +20,7 @@ const PlayButtons = () => {
   }
 
   const checkClass = playerState.pokerGame.table.lastBet === 0 ? 'secondaryButton' : 'tertiaryButton';
-  const callClass = 'secondaryButton'
+  const callClass = playerState.pokerGame.table.lastBet > 0 ? 'secondaryButton' : 'tertiaryButton'
   const raiseClass = playerState.pokerGame.table.round >= 2 ? 'secondaryButton' : 'tertiaryButton';
   const foldClass = 'secondaryButton';
 
@@ -32,14 +33,20 @@ const PlayButtons = () => {
   }
 
   function raise() {
-    axios.get(`/api/poker?action=game_action&session_id=${localStorage.CAESSINO_SESSION_ID}&specificAction=raise&betAmount=0`);
+    dispatch(setPoker({
+        ...styleState.poker,
+        displays: {
+            ...styleState.poker.displays,
+            raiseModal: true,
+        },
+    }))
   }
 
   function fold() {
     axios.get(`/api/poker?action=game_action&session_id=${localStorage.CAESSINO_SESSION_ID}&specificAction=fold&betAmount=0`);
   }
 
-  if (playerState.pokerGame.table.started && playerState.pokerGame.player.isSatDown) {
+  if (playerState.pokerGame.table.started && playerState.pokerGame.player.isSatDown && parseInt(playerState.pokerGame.table.round) < 5) {
     return (
       <div className="pokerPlayButtonsContainer">
         <button className={checkClass} onClick={() => check()}>Check</button>

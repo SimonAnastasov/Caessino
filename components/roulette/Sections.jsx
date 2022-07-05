@@ -1,4 +1,5 @@
 import React from 'react'
+import Ball from './Ball';
 
 import BetModal from './BetModal';
 import BetsImage from './BetsImage';
@@ -17,6 +18,8 @@ const Sections = () => {
         <CoinOnTable/>
 
         <img id="rouletteWheelImg" src="/images/roulette-wheel.png" alt="Roulette wheel" style={{transform: 'translate(-50%, -50%)'}}/>
+
+        <Ball/>
 
         <PlayersDisplay/>
 
