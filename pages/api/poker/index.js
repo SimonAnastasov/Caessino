@@ -4,338 +4,9 @@ require('dotenv').config();
 
 import { v4 as uuidv4 } from 'uuid';
 
-const sampleTable = {
-    id: '',
-    name: '',
-    status: '_1_just_created',
-    creator: '',
-    started: false,
-    ended: false,
-    round: 0,
-    turnIdx: -1,
-    pot: 0,
-    lastBet: 0,
-    turnsSinceLastBet: 0,
-    players: [],
-    deck: [],
-    cardsOnTable: [],
-    winners: [],
-    splitWinners: false,
-    turnTimeout: null,
-}
+import { tables, deck, sampleTable, samplePlayer } from './gameStates'
 
-const samplePlayer = {
-    id: '',
-    table: '',
-    status: '_1_just_entered',
-    displayName: '',
-    cards: [],
-    hand: {
-        hand: '',
-        highCard: 0,
-    },
-    betAmount: 0,
-    isSatDown: false,
-    isCoordinator: false,
-    isFolded: false,
-    isGhost: false,
-    credits: 0,
-}
-
-let tables = []
-// contures -> { status, round, turnIdx, lastBet, turnsSinceLastBet,
-//
-//              players -> { id, table, status, displayName, cards,
-//                          betAmount, isSatDown, isCoordinator },
-//
-//              cardsOnTable }
-
-const singleDeck = ["SA", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "SX", "SJ", "SQ", "SK",
-                    "HA", "H2", "H3", "H4", "H5", "H6", "H7", "H8", "H9", "HX", "HJ", "HQ", "HK",
-                    "CA", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "CX", "CJ", "CQ", "CK",
-                    "DA", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "DX", "DJ", "DQ", "DK"    ];
-
-const deck = [...singleDeck];
-
-/* We are using 5 decks */
-// const deck = singleDeck.concat(singleDeck).concat(singleDeck).concat(singleDeck).concat(singleDeck);
-
-/**
- * Replace deck if empty
- */
-function checkDeckSize(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        if (tables[tableIdx].deck.length === 0) {
-            tables[tableIdx].deck = [...deck];
-        }
-    }
-}
-
-/**
- * Draw a SINGLE random card
- */
-function drawASingleCard(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        checkDeckSize(tableId);
-        
-        let idx = Math.floor(Math.random() * tables[tableIdx].deck.length);
-        let card = tables[tableIdx].deck[idx];
-
-        tables[tableIdx].deck.splice(idx, 1);
-
-        return card;
-    }
-
-    return undefined;
-}
-
-function getMaxBet(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        let maxBet = 0;
-        table.players.forEach(player => {
-            if (player.betAmount > maxBet) {
-                maxBet = player.betAmount;
-            }
-        })
-        
-        return maxBet;
-    }
-    
-    return 0;
-}
-
-function setNextPlayerIdx(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        if (table.turnTimeout !== null) clearTimeout(table.turnTimeout);
-
-        let counter = 10;
-
-        while (true) {
-            counter--;
-
-            table.turnIdx++;
-            table.turnIdx %= table.players.length;
-            
-            if (table.players[table.turnIdx] !== undefined && table.players[table.turnIdx].isSatDown && !table.players[table.turnIdx].isFolded) {
-                if (table.round >= 2 && table.players[table.turnIdx].credits === 0) continue;
-
-                let prevTurnIdx = table.turnIdx;
-                table.turnTimeout = setTimeout(() => {
-                    if (prevTurnIdx === table.turnIdx) {
-                        if (table.players[table.turnIdx] !== undefined) {
-                            table.players[table.turnIdx].isFolded = true;
-
-                            setNextPlayerIdx(table.id);
-                        }
-                    }
-                }, 30000);
-
-                table.lastBet = getMaxBet(table.id) - table.players[table.turnIdx].betAmount;
-                if (table.round === 1 && getMaxBet(table.id) <= 20) table.lastBet = 20;
-
-                return ;
-            }
-
-            if (counter <= 0) return ;
-        }
-    }
-}
-
-function getCardsOnTable(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        if (table.round === 2) {
-            for (let i = 0; i < 3; i++) {
-                const card = drawASingleCard(table.id);
-                            
-                if (card !== undefined) {
-                    table.cards.push(card);
-                }
-            }
-        }
-        else if (table.round > 2) {
-            const card = drawASingleCard(table.id);
-                            
-            if (card !== undefined) {
-                table.cards.push(card);
-            }
-        }
-    }
-}
-
-function resetGame(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        table.started = false;
-        table.ended = false;
-        table.round = 0;
-        table.turnIdx = 0;
-        table.turnTimeout = null;
-        table.pot = 0;
-        table.lastBet = 20;
-        table.turnsSinceLastBet = 0;
-        table.deck = [...deck];
-
-        table.players = table.players.filter(e=>e.isGhost === false);
-
-        table.players.forEach(player => {
-            player.credits = 0;
-            player.cards = [];
-            player.isFolded = false;
-            player.betAmount = 0;
-            player.wonAmount = 0;
-            player.hand = {
-                hand: '',
-                highCard: 0,
-            }
-        })
-        table.winners = [];
-        table.splitWinners = false;
-        table.cards = [];
-    }
-}
-
-function giveMoneyToTheWinners(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        const satDownPlayers = table.players.filter(e => e.isSatDown === true);
-        const satDownCount = satDownPlayers.length;
-
-        table.players.forEach(player => {
-            let winnings = 0;
-            if (table.winners.indexOf(player) !== -1) {
-                // winner
-                winnings = 0;
-                table.players.forEach(tmpPlayer => {
-                    winnings += Math.min(tmpPlayer.betAmount, player.betAmount);
-                })
-
-                axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${player.id}&credits=${winnings}&game=poker&outcome=won`).then(postgreRes => {
-                    if (postgreRes.data?.success) {
-                        player.credits = postgreRes.data?.credits;
-                    }
-                });
-            }
-            else {
-                // loser
-                winnings = player.betAmount;
-                table.players.forEach(tmpPlayer => {
-                    if (table.winners.indexOf(tmpPlayer) !== -1) {
-                        winnings -= tmpPlayer.betAmount;
-                    }
-                })
-
-                axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${player.id}&credits=${winnings}&game=poker&outcome=lost`).then(postgreRes => {
-                    if (postgreRes.data?.success) {
-                        player.credits = postgreRes.data?.credits;
-                    }
-                });
-            }
-
-            player.wonAmount = winnings;
-        })
-
-        setTimeout(() => {
-            resetGame(table.id);
-        }, 15000);
-    }
-}
-
-function setWinner(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        table.turnIdx = -1;
-
-        table.players.forEach(player => {
-            if (player.isSatDown && !player.isFolded) {
-                player.hand = getHandDetails(player.cards.concat(table.cards))
-            }
-        })
-
-        hands.forEach(hand => {
-            const playerHands = table.players.filter(e=>e.hand.hand === hand);
-
-            if (table.winners.length === 0) {
-                if (playerHands.length === 1) {
-                    table.winners.push(playerHands[0])
-                }
-                else if (playerHands.length > 1) {
-                    let tmp = playerHands[0].hand.highCard;
-                    let tmpWinners = [];
-
-                    playerHands.forEach(player => {
-                        if (player.hand.highCard > tmp) {
-                            tmp = player.hand.highCard;
-                        }
-                    })
-
-                    playerHands.forEach(player => {
-                        if (player.hand.highCard === tmp) {
-                            tmpWinners.push(player);
-                        }
-                    })
-
-                    if (tmpWinners.length > 1) table.splitWinners = true;
-                    table.winners = [...tmpWinners];
-                }
-            }
-        })
-
-        giveMoneyToTheWinners(table.id);
-    }
-}
-
-function progressRoundIfNeeded(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tables[tableIdx] !== undefined) {
-        const table = tables[tableIdx];
-
-        const satDownPlayers = table.players.filter(e=>e.isSatDown === true);
-        const remainingPlayers = satDownPlayers.filter(e=>e.isFolded === false);
-
-        if (table.turnsSinceLastBet === remainingPlayers.length) {
-            table.round++;
-            table.lastBet = 0;
-            table.turnsSinceLastBet = 0;
-
-            if (table.round <= 4) {
-                getCardsOnTable(table.id);
-            }
-            else {
-                table.ended = true;
-            }
-
-            if (table.ended && table.winners.length === 0) {
-                setWinner(table.id);
-            }
-        }
-    }
-}
+import { drawASingleCard, setNextPlayerIdx, progressRoundIfNeeded } from './tableSpecific'
 
 /**
  * ********************* BEGIN OF FUNCTIONS *********************
@@ -424,7 +95,7 @@ function getRestrictedTablesArray() {
 }
 
 function getRestrictedTableArray(tableId, session_id) {
-    let result = {...sampleTable};
+    let result = undefined;
 
     let tableIdx = tables.map(e=>e.id).indexOf(tableId);
 
@@ -504,8 +175,8 @@ function getTableAndPlayer(session_id) {
 
     return {
         success: false,
-        table: sampleTable,
-        player: samplePlayer,
+        table: {...sampleTable},
+        player: {...samplePlayer},
     };
 }
 
@@ -695,10 +366,22 @@ export default async function handler(req, res) {
 
                     if (table !== undefined && !table.started) {
                         table.players.push({
-                            ...samplePlayer,
                             id: req.query.session_id,
                             table: req.query.tableId,
-                            displayName: req.query.displayName
+                            credits: 0,
+                            status: '_1_just_entered',
+                            displayName: req.query.displayName,
+                            cards: [],
+                            betAmount: 0,
+                            wonAmount: 0,
+                            isSatDown: false,
+                            isCoordinator: false,
+                            isFolded: false,
+                            isGhost: false,
+                            hand: {
+                                hand: '',
+                                highCard: 0,
+                            },
                         })
                     }
                 }
@@ -734,7 +417,7 @@ export default async function handler(req, res) {
         if (req.query.action === 'update_state' && req.query?.session_id) {
             const session_id = req.query.session_id;
 
-            const { table, player } = getTableAndPlayer(session_id);
+            const { success, table, player } = getTableAndPlayer(session_id);
 
             res.json({
                 success: true,
@@ -777,89 +460,3 @@ export default async function handler(req, res) {
 /**
  * ********************* END OF REQUEST HANDLER *********************
  */
-
-const hands = [
-    'Royal Flush',
-    'Straight Flush',
-    'Four of a Kind',
-    'Full House',
-    'Flush',
-    'Straight',
-    'Three of a Kind',
-    'Two Pairs',
-    'Pair',
-    'High Card',
-]
-
-const order = "23456789TJQKA"
-function getHandDetails(hand) {
-    const cards = hand
-    const faces = cards.map(a => String.fromCharCode([77 - order.indexOf(a[1])])).sort()
-    const suits = cards.map(a => a[0]).sort()
-    const counts = faces.reduce(count, {})
-    const duplicates = Object.values(counts).reduce(count, {})
-    const flush = suits[0] === suits[4]
-    const first = faces[0].charCodeAt(1)
-    const straight = faces.every((f, index) => f.charCodeAt(1) - first === index)
-    let rank =
-        (flush && straight && 1) ||
-        (duplicates[4] && 2) ||
-        (duplicates[3] && duplicates[2] && 3) ||
-        (flush && 4) ||
-        (straight && 5) ||
-        (duplicates[3] && 6) ||
-        (duplicates[2] > 1 && 7) ||
-        (duplicates[2] && 8) ||
-        9;
-
-    return { hand: hands[rank], highCard: faces.sort(byCountFirst).join("") }
-
-    function byCountFirst(a, b) {
-        //Counts are in reverse order - bigger is better
-        const countDiff = counts[b] - counts[a]
-        if (countDiff) return countDiff // If counts don't match return
-        return b > a ? -1 : b === a ? 0 : 1
-    }
-
-    function count(c, a) {
-        c[a] = (c[a] || 0) + 1
-        return c
-    }
-}
-
-function getCardCombinations(playerCards, tableCards) {
-    let combinations = [];
-
-    combinations.push([playerCards[0], tableCards[0], tableCards[1], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[0], tableCards[0], tableCards[1], tableCards[2], tableCards[4]])
-
-    combinations.push([playerCards[0], tableCards[0], tableCards[1], tableCards[4], tableCards[3]])
-    combinations.push([playerCards[0], tableCards[0], tableCards[4], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[0], tableCards[4], tableCards[1], tableCards[2], tableCards[3]])
-
-    
-    combinations.push([playerCards[1], tableCards[0], tableCards[1], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[1], tableCards[0], tableCards[1], tableCards[2], tableCards[4]])
-
-    combinations.push([playerCards[1], tableCards[0], tableCards[1], tableCards[4], tableCards[3]])
-    combinations.push([playerCards[1], tableCards[0], tableCards[4], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[1], tableCards[4], tableCards[1], tableCards[2], tableCards[3]])
-
-
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[1], tableCards[2]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[1], tableCards[3]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[1], tableCards[4]])
-
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[2], tableCards[4]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[0], tableCards[3], tableCards[4]])
-
-    combinations.push([playerCards[0], playerCards[1], tableCards[1], tableCards[2], tableCards[3]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[1], tableCards[2], tableCards[4]])
-    combinations.push([playerCards[0], playerCards[1], tableCards[1], tableCards[3], tableCards[4]])
-
-    combinations.push([playerCards[0], playerCards[1], tableCards[2], tableCards[3], tableCards[4]])
-
-
-    return combinations;
-}

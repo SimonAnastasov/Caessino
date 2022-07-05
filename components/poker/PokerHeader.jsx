@@ -29,10 +29,12 @@ const PokerHeader = () => {
             displayLoadingScreen: true,
         }));
 
-        let interval;
+        let interval = null;
 
         axios.get(`/api/poker?action=get_player_info_on_enter&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
+                if (interval !== null) clearInterval(interval);
+
                 dispatch(setPlayer({
                     ...playerState.player,
                     displayName: res.data?.displayName,
@@ -88,7 +90,7 @@ const PokerHeader = () => {
                         <AiOutlineArrowLeft />
                     </h2>
                 </Link>
-                { playerState.pokerGame.player.table.length > 0 && <button style={{marginBottom: '4px', marginLeft: '32px', fontSize: '16px'}} className="tertiaryButton" onClick={() => leaveTable()}>Leave Table</button> }
+                { playerState.pokerGame?.player?.table?.length > 0 && <button style={{marginBottom: '4px', marginLeft: '32px', fontSize: '16px'}} className="tertiaryButton" onClick={() => leaveTable()}>Leave Table</button> }
             </div>
             <nav>
                 <ul>

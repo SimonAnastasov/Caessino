@@ -14,7 +14,7 @@ import RaiseModal from './sections/RaiseModal'
 const PokerSections = () => {
   const playerState = useSelector(state => state.player);
 
-  if (playerState.pokerGame.player.table.length > 0) {
+  if (playerState.pokerGame?.player?.table?.length > 0) {
     return (
       <>
           <Messages/>

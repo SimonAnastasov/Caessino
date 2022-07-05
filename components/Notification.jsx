@@ -2,10 +2,14 @@ import React from 'react'
 
 import { AiOutlineClose } from 'react-icons/ai';
 
+import { useState } from 'react';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { setStyle } from '../redux/reducers/styleSlice';
 
 const Notification = () => {
+    const [timeoutIsSet, setTimeoutIsSet] = useState(false);
+
     const styleState = useSelector(state => state.style);
 
     const dispatch = useDispatch();
@@ -23,9 +27,11 @@ const Notification = () => {
         }))
     }
 
-    if (styleState.style.notification.show === true) {
+    if (styleState.style.notification.show === true && !timeoutIsSet) {
+        setTimeoutIsSet(true);
         setTimeout(() => {
             close();
+            setTimeoutIsSet(false);
         }, 3000);
     }
 
