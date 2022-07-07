@@ -48,11 +48,11 @@ const PickATable = () => {
             <div>
                 <h3>Pick a table:</h3>
                 <div onClick={(e) => joinATable(e)}>
-                    {playerState.pokerGame.tables.map(table => (
+                    {playerState.pokerGame.tables.filter(table=>table.started===false).map(table => (
                         <div data-table={table.id} key={table.id}>
                             <p data-table={table.id}>Table name: {table.name}</p>
                             <p data-table={table.id}>Creator: {table.creator}</p>
-                            <p data-table={table.id}>Players: {table.players.length}/8</p>
+                            <p data-table={table.id}>Players: {table.players.filter(e=>e.isGhost===false).length}/8</p>
                             <p data-table={table.id}>Join</p>
                         </div>
                     ))}

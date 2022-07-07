@@ -23,12 +23,13 @@ const Messages = () => {
 
     return (
         <div className="pokerMessagesContainer">
-            { playerState.pokerGame.table.started && playerState.pokerGame.table.ended && playerState.pokerGame.table.winners.length === 1 && <p>Game over - {playerState.pokerGame.table.winners[0]?.displayName} won ${playerState.pokerGame.table.winners[0]?.wonAmount} with a {playerState.pokerGame.table.winners[0]?.hand?.hand} combination! Congratulations.</p> }
-            { playerState.pokerGame.table.started && playerState.pokerGame.table.ended && playerState.pokerGame.table.winners.length > 1 && <p>Game over - {playerState.pokerGame.table.winners.map(e=>e.displayName).join(", ")} drew!</p> }
-            { playerState.pokerGame.table.started && playerState.pokerGame.table.ended && <p>New game will start soon.</p> }
+            { playerState.pokerGame.table.ended && playerState.pokerGame.table.onlyOnePlayerLeft && <p>Game over - {playerState.pokerGame.table.winners[0]?.displayName} won ${playerState.pokerGame.table.winners[0]?.wonAmount} because everyone else folded! Congratulations.</p> }
+            { playerState.pokerGame.table.ended && !playerState.pokerGame.table.onlyOnePlayerLeft && playerState.pokerGame.table.winners.length === 1 && <p>Game over - {playerState.pokerGame.table.winners[0]?.displayName} won ${playerState.pokerGame.table.winners[0]?.wonAmount} with a {playerState.pokerGame.table.winners[0]?.hand?.hand} combination! Congratulations.</p> }
+            { playerState.pokerGame.table.ended && playerState.pokerGame.table.winners.length > 1 && <p>Game over - {playerState.pokerGame.table.winners.map(e=>e.displayName).join(", ")} drew!</p> }
+            { playerState.pokerGame.table.ended && <p>New game will start soon.</p> }
 
             { playerState.pokerGame.table.started && !playerState.pokerGame.table.ended && <p>Round {playerState.pokerGame.table.round}/4{roundMessage}</p> }
-            { !playerState.pokerGame.table.started && <p>Waiting for coordinator {playerState.pokerGame.table.creator} to start the game.</p> }
+            { !playerState.pokerGame.table.started && !playerState.pokerGame.table.ended && <p>Waiting for coordinator {playerState.pokerGame.table.creator} to start the game.</p> }
             { playerState.pokerGame.table.started && !playerState.pokerGame.table.ended && <p>{turnMessage}</p> }
             { playerState.pokerGame.table.started && !playerState.pokerGame.table.ended && <p>{callMessage}</p> }
         </div>

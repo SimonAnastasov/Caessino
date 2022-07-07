@@ -412,8 +412,9 @@ export default function handler(req, res) {
                   if (session) {
                     // Already logged in
                     res.json({
-                      success: false,
-                      message: 'You are already logged in',
+                      success: true,
+                      message: 'Login successful',
+                      session: session,
                     })
                   }
                   else {

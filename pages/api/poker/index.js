@@ -46,6 +46,7 @@ function createTable(playerId, playerName, tableName) {
                 highCard: 0,
             },
         }],
+        onlyOnePlayerLeft: false,
         winners: [],
         splitWinners: false,
         cards: [],
@@ -280,7 +281,7 @@ export default async function handler(req, res) {
         if (req.query.action === 'start_game' && req.query?.session_id) {
             const { success, table } = getTableAndPlayer(req.query.session_id)
 
-            if (success && !table.started) {
+            if (success && !table.started && !table.ended && table.players.filter(e=>e.isSatDown===true).length >= 2) {
                 table.players.forEach(player => {
                     axios.get(`${process.env.HOME_URL}/api/postgre/?action=check_if_logged_in&session_id=${player.id}`).then(postgreRes => {
                         if (postgreRes.data?.success) {
@@ -341,8 +342,13 @@ export default async function handler(req, res) {
                 player.isGhost = true;
                 player.isFolded = true;
 
-                if (table.players[table.turnIdx] !== undefined && table.players[table.turnIdx] === player) {
-                    setNextPlayerIdx(table.id);
+                if (table.started) {
+                    if (table.players[table.turnIdx] !== undefined && table.players[table.turnIdx] === player) {
+                        setNextPlayerIdx(table.id);
+                    }
+                }
+                else {
+                    table.players = table.players.filter(e=>e.isGhost === false);
                 }
             }
 

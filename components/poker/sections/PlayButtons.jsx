@@ -59,7 +59,7 @@ const PlayButtons = () => {
   else {
     return (
       <div className="pokerPlayButtonsContainer">
-        {!playerState.pokerGame.table.started && playerState.pokerGame.player.isCoordinator && playerState.pokerGame.player.isSatDown && <button className="secondaryButton" onClick={() => startGame()}>Start game</button>}
+        {!playerState.pokerGame.table.started && !playerState.pokerGame.table.ended && playerState.pokerGame.player.isCoordinator && playerState.pokerGame.player.isSatDown && <button className="secondaryButton" onClick={() => startGame()}>Start game</button>}
         {!playerState.pokerGame.table.started && !playerState.pokerGame.player.isSatDown && <button className="secondaryButton" onClick={() => sitDown()}>Take a seat</button>}
       </div>
     )
