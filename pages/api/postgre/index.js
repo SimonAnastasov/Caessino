@@ -6,13 +6,12 @@ require('dotenv').config();
 
 const crypto = require('crypto');
 
+import { progressRoundTillTheEnd } from '../poker/tableSpecific';
+
 const Pool = require('pg').Pool
 const pool = new Pool({
   connectionString: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}/${process.env.POSTGRES_DB}`
 });
-
-const sessions = []
-// example session = { id, displayName, username, credits, lastActivity }
 
 export default function handler(req, res) {
   /**
@@ -96,6 +95,8 @@ export default function handler(req, res) {
             }
           });
         }
+
+        update_sessions_to_database();
           
         res.json({
           success: true,
@@ -158,6 +159,8 @@ export default function handler(req, res) {
             });
           }
         });
+
+        update_sessions_to_database();
 
         res.json({
           success: true,
@@ -252,6 +255,8 @@ export default function handler(req, res) {
         sessions.splice(sessions.indexOf(session), 1);
 
         axios.get(`${process.env.HOME_URL}/api/blackjack/?action=remove_room&session_id=${session_id}`);
+
+        update_sessions_to_database();
       }
 
       res.json({
@@ -426,8 +431,10 @@ export default function handler(req, res) {
                       credits: playersResults.rows[0].credits,
                       lastActivity: Date.now(),
                     }
-                    
+
                     sessions.push(session);
+
+                    update_sessions_to_database();
     
                     res.json({
                       success: true,
@@ -452,3 +459,60 @@ export default function handler(req, res) {
     }
   }
 }
+
+
+/**
+ * User session data
+ */
+export var sessions = []
+
+export function update_sessions_to_database() {
+   pool.query('UPDATE sessions SET data = $1 WHERE identifier = $2', [JSON.stringify(sessions), 'sessions_data'], (error, results) => {
+     if (error) throw error;
+   });
+}
+   
+export function load_sessions_from_database() {
+   pool.query('SELECT data FROM sessions WHERE identifier = $1', ['sessions_data'], (error, results) => {
+     if (error) throw error;
+ 
+     sessions = JSON.parse(results?.rows[0]?.data || []);
+   });
+}
+load_sessions_from_database();
+ 
+ /**
+  * Poker game data
+  */
+export var tables = []
+ 
+export function cleanTables() {
+   tables = [];
+}
+ 
+export function update_tables_to_database() {
+   tables = tables.map(table => ({...table, turnTimeout: null}));
+ 
+   pool.query('UPDATE poker SET data = $1 WHERE identifier = $2', [JSON.stringify(tables), 'poker_data'], (error, results) => {
+     if (error) throw error;
+   });
+}
+   
+export async function load_tables_from_database() {
+   pool.query('SELECT data FROM poker WHERE identifier = $1', ['poker_data'], (error, results) => {
+       if (error) throw error;
+ 
+       tables = JSON.parse(results?.rows[0]?.data || []);
+ 
+       tables.forEach(table => {
+         if (table.started) {
+           progressRoundTillTheEnd(table.id);
+         }
+       })
+ 
+       cleanTables();
+ 
+       update_tables_to_database();
+   });
+}
+load_tables_from_database();

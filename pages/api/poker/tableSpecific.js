@@ -1,4 +1,6 @@
-import { tables, deck } from './gameStates'
+import { tables } from '../postgre/index';
+
+import { deck } from './gameStates'
 
 import { hands, getBestHandDetails } from './handEvaluations';
 
@@ -61,7 +63,7 @@ export function getMaxBet(tableId) {
 export function setNextPlayerIdx(tableId) {
     const tableIdx = tables.map(e=>e.id).indexOf(tableId);
 
-    if (tables[tableIdx] !== undefined && !tables[tableIdx].ended) {
+    if (tables[tableIdx] !== undefined && tables[tableIdx].started && !tables[tableIdx].ended) {
         const table = tables[tableIdx];
 
         const remainingPlayers = table.players.filter(e=>e.isSatDown===true).filter(e=>e.isGhost===false);
@@ -79,6 +81,7 @@ export function setNextPlayerIdx(tableId) {
         }
 
         if (table.turnTimeout !== null) clearTimeout(table.turnTimeout);
+        table.prevTurnIdx = -2;
 
         let counter = 10;
 
@@ -90,17 +93,6 @@ export function setNextPlayerIdx(tableId) {
             
             if (table.players[table.turnIdx] !== undefined && table.players[table.turnIdx].isSatDown && !table.players[table.turnIdx].isFolded) {
                 if (table.round >= 2 && table.players[table.turnIdx].credits === 0) continue;
-
-                let prevTurnIdx = table.turnIdx;
-                table.turnTimeout = setTimeout(() => {
-                    if (prevTurnIdx === table.turnIdx) {
-                        if (table.players[table.turnIdx] !== undefined) {
-                            table.players[table.turnIdx].isFolded = true;
-                            
-                            setNextPlayerIdx(table.id);
-                        }
-                    }
-                }, 30000);
 
                 table.lastBet = getMaxBet(table.id) - table.players[table.turnIdx].betAmount;
                 if (table.round === 1 && getMaxBet(table.id) <= 20) table.lastBet = 20;
@@ -150,6 +142,7 @@ export function resetGame(tableId) {
         table.ended = false;
         table.round = 0;
         table.turnIdx = -1;
+        table.lastActivity = 0;
         table.turnTimeout = null;
         table.pot = 0;
         table.lastBet = 20;
@@ -232,6 +225,8 @@ export function setWinnerDirect(tableId, player) {
         table.turnIdx = -1;
         table.started = false;
         table.ended = true;
+        if (table.turnTimeout !== null) clearTimeout(table.turnTimeout);
+        table.turnTimeout = null;
 
         table.onlyOnePlayerLeft = true;
         table.winners = [player];
@@ -300,6 +295,8 @@ export function progressRoundTillTheEnd(tableId) {
 
         table.started = false;
         table.ended = true;
+        if (table.turnTimeout !== null) clearTimeout(table.turnTimeout);
+        table.turnTimeout = null;
         if (table.ended && table.winners.length === 0) {
             setWinner(table.id);
         }
@@ -326,6 +323,8 @@ export function progressRoundIfNeeded(tableId) {
             else {
                 table.started = false;
                 table.ended = true;
+                if (table.turnTimeout !== null) clearTimeout(table.turnTimeout);
+                table.turnTimeout = null;
             }
 
             if (table.ended && table.winners.length === 0) {

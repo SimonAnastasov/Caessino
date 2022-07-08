@@ -2,188 +2,11 @@ import axios from 'axios';
 
 require('dotenv').config();
 
-import { v4 as uuidv4 } from 'uuid';
+import { createTable, getRestrictedTablesArray, getRestrictedTableArray, getTable, getTableAndPlayer } from './gameStates';
 
-import { tables, deck, sampleTable, samplePlayer } from './gameStates'
+import { drawASingleCard, setNextPlayerIdx, progressRoundIfNeeded, progressRoundTillTheEnd } from './tableSpecific'
 
-import { drawASingleCard, setNextPlayerIdx, progressRoundIfNeeded } from './tableSpecific'
-
-/**
- * ********************* BEGIN OF FUNCTIONS *********************
- */
-
-function createTable(playerId, playerName, tableName) {
-    const tableId = uuidv4();
-
-    const table = {
-        id: tableId,
-        name: tableName,
-        status: '_1_just_created',
-        creator: playerName,
-        started: false,
-        ended: false,
-        round: 0,
-        turnIdx: -1,
-        pot: 0,
-        lastBet: 20,
-        turnsSinceLastBet: 0,
-        deck: [...deck],
-        players: [{
-            id: playerId,
-            table: tableId,
-            credits: 0,
-            status: '_1_just_entered',
-            displayName: playerName,
-            cards: [],
-            betAmount: 0,
-            wonAmount: 0,
-            isSatDown: false,
-            isCoordinator: true,
-            isFolded: false,
-            isGhost: false,
-            hand: {
-                hand: '',
-                highCard: 0,
-            },
-        }],
-        onlyOnePlayerLeft: false,
-        winners: [],
-        splitWinners: false,
-        cards: [],
-    }
-
-    tables.push(table)
-
-    return table;
-}
-
-function getRestrictedTablesArray() {
-    let result = [];
-
-    tables.forEach(table => {
-        let tmpPlayers = [];
-        table.players.forEach(player => {
-            tmpPlayers.push({
-                ...player,
-                id: '',
-                table: '',
-                cards: '',
-            })
-        });
-
-        let tmpWinners = [];
-        table.winners.forEach(winner => {
-            tmpWinners.push({
-                ...winner,
-                id: '',
-                table: '',
-                cards: '',
-            })
-        });
-
-        let tmp = {
-            ...table,
-            deck: [],
-            players: tmpPlayers,
-            winners: tmpWinners,
-            turnTimeout: null,
-        }
-
-        result.push({...tmp});
-    })
-
-    return result;
-}
-
-function getRestrictedTableArray(tableId, session_id) {
-    let result = undefined;
-
-    let tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tableIdx !== -1) {
-        let table = tables[tableIdx];
-
-        let tmpPlayers = [];
-        table.players.forEach(player => {
-            if (player.id === session_id) {
-                tmpPlayers.push({
-                    ...player,
-                    id: '',
-                    table: '',
-                })
-            }
-            else {
-                tmpPlayers.push({
-                    ...player,
-                    id: '',
-                    table: '',
-                    cards: table.ended ? player.cards : player.cards.length > 0 ? ['back', 'back'] : '',
-                })
-            }
-        });
-
-        let tmpWinners = [];
-        table.winners.forEach(winner => {
-            if (winner.id === session_id) {
-                tmpWinners.push({
-                    ...winner,
-                    id: '',
-                    table: '',
-                })
-            }
-            else {
-                tmpWinners.push({
-                    ...winner,
-                    id: '',
-                    table: '',
-                    cards: table.ended ? winner.cards : winner.cards.length > 0 ? ['back', 'back'] : '',
-                })
-            }
-        });
-        result = {
-            ...table,
-            players: tmpPlayers,
-            winners: tmpWinners,
-            turnTimeout: null,
-        }
-    }
-
-    return result;
-}
-
-function getTable(tableId) {
-    const tableIdx = tables.map(e=>e.id).indexOf(tableId);
-
-    if (tableIdx !== -1) {
-        return tables[tableIdx];
-    }
-
-    return undefined;
-}
-
-function getTableAndPlayer(session_id) {
-    for (let tableIdx = 0; tableIdx < tables.length; tableIdx++) {
-        const playerIdx = tables[tableIdx].players.filter(e=>e.isGhost === false).map(e=>e.id).indexOf(session_id);
-
-        if (playerIdx !== -1) {
-            return {
-                success: true,
-                table: tables[tableIdx],
-                player: tables[tableIdx].players[playerIdx],
-            }
-        }
-    }
-
-    return {
-        success: false,
-        table: {...sampleTable},
-        player: {...samplePlayer},
-    };
-}
-
-/**
- * ********************* END OF FUNCTIONS *********************
- */
+import { tables, cleanTables, update_tables_to_database, load_tables_from_database } from '../postgre/index'
 
 /**
  * ********************* BEGIN OF REQUEST HANDLER *********************
@@ -265,10 +88,13 @@ export default async function handler(req, res) {
                 }
 
                 if (okayToGo) {
+                    table.lastActivity = Date.now();
                     setNextPlayerIdx(table.id);
                 }
             }
             
+            update_tables_to_database();
+
             res.end();
         }
 
@@ -290,6 +116,7 @@ export default async function handler(req, res) {
                     });
                 })
 
+                table.lastActivity = Date.now();
                 table.started = true;
                 table.round = 1;
 
@@ -308,6 +135,8 @@ export default async function handler(req, res) {
                     }
                 })
             }
+
+            update_tables_to_database();
             
             res.end();
         }
@@ -326,6 +155,8 @@ export default async function handler(req, res) {
                 player.isSatDown = true;
             }
 
+            update_tables_to_database();
+
             res.end();
         }
 
@@ -339,6 +170,8 @@ export default async function handler(req, res) {
             const { success, table, player } = getTableAndPlayer(req.query.session_id);
 
             if (success) {
+                table.lastActivity = Date.now();
+                
                 player.isGhost = true;
                 player.isFolded = true;
 
@@ -351,6 +184,8 @@ export default async function handler(req, res) {
                     table.players = table.players.filter(e=>e.isGhost === false);
                 }
             }
+
+            update_tables_to_database();
 
             res.end();
         }
@@ -393,6 +228,8 @@ export default async function handler(req, res) {
                 }
             }
 
+            update_tables_to_database();
+
             res.end();
         }
 
@@ -411,6 +248,8 @@ export default async function handler(req, res) {
                 createTable(req.query.session_id, req.query.displayName, req.query.tableName);
             }
 
+            update_tables_to_database();
+
             res.end();
         }
 
@@ -424,6 +263,18 @@ export default async function handler(req, res) {
             const session_id = req.query.session_id;
 
             const { success, table, player } = getTableAndPlayer(session_id);
+
+            if (table.started && !table.ended) {
+                const d = Date.now();
+
+                if (d - table.lastActivity > 30000) {
+                    if (table.players[table.turnIdx] !== undefined) {
+                        table.players[table.turnIdx].isFolded = true;
+
+                        setNextPlayerIdx(table.id);
+                    }
+                }
+            }
 
             res.json({
                 success: true,
