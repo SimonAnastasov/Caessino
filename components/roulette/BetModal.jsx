@@ -29,45 +29,23 @@ const BetModal = () => {
     }
 
     function placeBet() {
-        axios.get(`/api/roulette?action=place_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&betAmount=${styleState.roulette.inputControls.bet.chosenCredits}&whichBets=${styleState.roulette.whichBets.toString()}`).then(res => {
-            if (res.data?.success) {
-                dispatch(setPlayer({
-                    ...playerState.player,
-                    credits: res.data?.credits,
-                }));
+        axios.get(`/api/roulette?action=place_bet&session_id=${localStorage.CAESSINO_SESSION_ID}&betAmount=${styleState.roulette.inputControls.bet.chosenCredits}&whichBets=${styleState.roulette.whichBets.toString()}&coinPlacedX=${styleState.roulette.coinPlaced.x}&coinPlacedY=${styleState.roulette.coinPlaced.y}`);
 
-                dispatch(setRouletteGame(res.data?.game));
-
-                closeModal(false);
-            }
-        });
+        closeModal();
     }
 
-    function closeModal(removeCoin = true) {
-        if (removeCoin) {
-            dispatch(setRoulette({
-                ...styleState.roulette,
-                displays: {
-                  ...styleState.roulette.displays,
-                  betModal: false,
-                },
-                showCoin: false,
-              }))
-        }
-        else {
-            dispatch(setRoulette({
-                ...styleState.roulette,
-                displays: {
-                    ...styleState.roulette.displays,
-                    betModal: false,
-                },
-                showCoin: true,
-            }));
-        }
+    function closeModal() {
+        dispatch(setRoulette({
+            ...styleState.roulette,
+            displays: {
+                ...styleState.roulette.displays,
+                betModal: false,
+            },
+        }));
     }
 
     return (
-        <div className="rouletteBetModal" style={{display: styleState.roulette.displays.betModal && playerState.rouletteGame.timeToStart > 10 ? 'flex' : 'none'}}>
+        <div className="rouletteBetModal" style={{display: styleState.roulette.displays.betModal && playerState.rouletteGame.game.timeToStart > 10 && playerState.rouletteGame.game.timeToStart <= playerState.rouletteGame.game.COUNTDOWN_FROM ? 'flex' : 'none'}}>
             <p>You have chosen to bet on: <span>{styleState.roulette.whichBets.map((bet, i) => `${bet} `)}</span><br/>Please select the amount you will bet</p>
             <div>
                 <div>

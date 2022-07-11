@@ -255,7 +255,7 @@ export default async function handler(req, res) {
 
         /**
          * /---------------------- GET ----------------------/
-         * Creates the table and enters the user inside
+         * Updates the state periodically
          * @action update_state
          * @param session_id
          */
@@ -264,13 +264,14 @@ export default async function handler(req, res) {
 
             const { success, table, player } = getTableAndPlayer(session_id);
 
-            if (table.started && !table.ended) {
+            if (success && table.started && !table.ended) {
                 const d = Date.now();
 
                 if (d - table.lastActivity > 30000) {
                     if (table.players[table.turnIdx] !== undefined) {
                         table.players[table.turnIdx].isFolded = true;
 
+                        table.lastActivity = Date.now();
                         setNextPlayerIdx(table.id);
                     }
                 }

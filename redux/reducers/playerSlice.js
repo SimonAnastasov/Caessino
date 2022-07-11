@@ -15,9 +15,30 @@ const initialState = {
         sideBetName: '',
     },
     rouletteGame: {
-        status: '',
-        timeToStart: 0,
-        players: [],
+        game: {
+            status: '_1_ongoing_timer',
+            timeToStart: 30,
+            COUNTDOWN_FROM: 30,
+            WAIT_BEFORE: 20,
+            magicNumber: -1,
+            winningBets: [],
+            players: [],
+        },
+        player: {
+            session_id: '',
+            name: '',
+            whichBets: [],
+            coinPlaced: {
+                x: -1,
+                y: -1,
+            },
+            credits: -1,
+            betAmount: 0,
+            wonAmount: 0,
+            status: '_1_',
+            outcome: 'none',
+            gotResults: false,
+        },
     },
     pokerGame: {
         tables: [],

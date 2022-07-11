@@ -82,7 +82,6 @@ const initialState = {
     },
     // roulette
     roulette: {
-        COUNTDOWN_FROM: 30,
         displays: {
             betModal: false,
         },
@@ -93,10 +92,9 @@ const initialState = {
         },
         whichBets: [],
         coinPlaced: {
-            x: 0,
-            y: 0,
-        },
-        showCoin: false,
+            x: -1,
+            y: -1,
+        }
     },
     // poker
     poker: {

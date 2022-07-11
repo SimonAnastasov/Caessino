@@ -24,9 +24,8 @@ const BetsImage = () => {
     
         let clicked = getClickedArray(xOffset, singleX, yOffset, singleY);
 
-        if (clicked.length > 0 && playerState.rouletteGame.status.substr(1, 1) === '1') {
-          const playerIdx = playerState.rouletteGame.players.map(e=>e.session_id).indexOf(localStorage.CAESSINO_SESSION_ID);
-          if (playerIdx !== -1 && playerState.rouletteGame.players[playerIdx].status.substr(1, 1) === '1') {
+        if (clicked.length > 0 && playerState.rouletteGame.game.status.includes("_1_")) {
+          if (playerState.rouletteGame.player.status.includes("_1_")) {
             openModal(clicked, e);
           }
         }
