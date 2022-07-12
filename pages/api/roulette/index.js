@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { game, update_game_to_database } from '../postgre/index'
+
 require('dotenv').config();
 
 let samplePlayer = {
@@ -140,14 +142,14 @@ function calculateWinnings(player) {
     }, 1000);
 })();
 
-let game = {
-    status: '_1_ongoing_timer',     // statuses: _1_ongoing_timer, _2_spinning,
-    timeToStart: 30,                // in seconds
-    COUNTDOWN_FROM: 30,
-    WAIT_BEFORE: 20,
-    magicNumber: -1,
-    winningBets: [],
-    players: [],
+if (game.status === undefined) {
+    game.status = '_1_ongoing_timer';     // statuses: _1_ongoing_timer, _2_spinning
+    game.timeToStart = 30;                // in seconds
+    game.COUNTDOWN_FROM = 30;
+    game.WAIT_BEFORE = 20;
+    game.magicNumber = -1;
+    game.winningBets = [];
+    game.players = [];
 }
 
 function addPlayer(session_id, name) {
@@ -259,6 +261,10 @@ export default async function handler(req, res) {
 
                     player.gotResults = true;
                 }
+            }
+
+            if (game.loaded !== undefined && game.loaded) {
+                update_game_to_database();
             }
 
             res.json({

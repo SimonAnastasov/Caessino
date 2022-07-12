@@ -273,6 +273,8 @@ export default async function handler(req, res) {
 
                         table.lastActivity = Date.now();
                         setNextPlayerIdx(table.id);
+                        
+                        update_tables_to_database();
                     }
                 }
             }

@@ -467,23 +467,23 @@ export default function handler(req, res) {
 export var sessions = []
 
 export function update_sessions_to_database() {
-   pool.query('UPDATE sessions SET data = $1 WHERE identifier = $2', [JSON.stringify(sessions), 'sessions_data'], (error, results) => {
-     if (error) throw error;
-   });
+  pool.query('UPDATE sessions SET data = $1 WHERE identifier = $2', [JSON.stringify(sessions), 'sessions_data'], (error, results) => {
+    if (error) throw error;
+  });
 }
    
 export function load_sessions_from_database() {
-   pool.query('SELECT data FROM sessions WHERE identifier = $1', ['sessions_data'], (error, results) => {
-     if (error) throw error;
- 
-     sessions = JSON.parse(results?.rows[0]?.data || []);
-   });
+  pool.query('SELECT data FROM sessions WHERE identifier = $1', ['sessions_data'], (error, results) => {
+    if (error) throw error;
+
+    sessions = JSON.parse(results?.rows[0]?.data || []);
+  });
 }
 load_sessions_from_database();
  
- /**
-  * Poker game data
-  */
+/**
+ *  Poker game data
+ */
 export var tables = []
  
 export function cleanTables() {
@@ -491,28 +491,52 @@ export function cleanTables() {
 }
  
 export function update_tables_to_database() {
-   tables = tables.map(table => ({...table, turnTimeout: null}));
- 
-   pool.query('UPDATE poker SET data = $1 WHERE identifier = $2', [JSON.stringify(tables), 'poker_data'], (error, results) => {
-     if (error) throw error;
-   });
+  tables = tables.map(table => ({...table, turnTimeout: null}));
+
+  pool.query('UPDATE poker SET data = $1 WHERE identifier = $2', [JSON.stringify(tables), 'poker_data'], (error, results) => {
+    if (error) throw error;
+  });
 }
    
 export async function load_tables_from_database() {
-   pool.query('SELECT data FROM poker WHERE identifier = $1', ['poker_data'], (error, results) => {
-       if (error) throw error;
- 
-       tables = JSON.parse(results?.rows[0]?.data || []);
- 
-       tables.forEach(table => {
-         if (table.started) {
-           progressRoundTillTheEnd(table.id);
-         }
-       })
- 
-       cleanTables();
- 
-       update_tables_to_database();
-   });
+  pool.query('SELECT data FROM poker WHERE identifier = $1', ['poker_data'], (error, results) => {
+    if (error) throw error;
+
+    tables = JSON.parse(results?.rows[0]?.data || []);
+
+    tables.forEach(table => {
+      if (table.started) {
+        progressRoundTillTheEnd(table.id);
+      }
+    })
+
+    cleanTables();
+
+    update_tables_to_database();
+  });
 }
 load_tables_from_database();
+
+/**
+ *  Roulette game data
+ */
+export var game = {}
+  
+export function update_game_to_database() {
+  pool.query('UPDATE roulette SET data = $1 WHERE identifier = $2', [JSON.stringify(game), 'roulette_data'], (error, results) => {
+    if (error) throw error;
+  });
+}
+    
+export async function load_game_from_database() {
+  pool.query('SELECT data FROM roulette WHERE identifier = $1', ['roulette_data'], (error, results) => {
+    if (error) throw error;
+
+    game = JSON.parse(results?.rows[0]?.data || []);
+
+    game.loaded = true;
+    console.log(game);
+  });
+}
+load_game_from_database();
+ 
