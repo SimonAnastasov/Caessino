@@ -535,7 +535,6 @@ export async function load_game_from_database() {
     game = JSON.parse(results?.rows[0]?.data || []);
 
     game.loaded = true;
-    console.log(game);
   });
 }
 load_game_from_database();
