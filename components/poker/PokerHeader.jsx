@@ -9,7 +9,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { setPlayer, setPokerGame, setSocket } from '../../redux/reducers/playerSlice'
+import { setPlayer, setPokerGame } from '../../redux/reducers/playerSlice'
 import { setStyle } from '../../redux/reducers/styleSlice'
 
 import axios from 'axios';
@@ -35,18 +35,6 @@ const PokerHeader = () => {
             if (res.data?.success) {
                 if (interval !== null) clearInterval(interval);
 
-                dispatch(setPlayer({
-                    ...playerState.player,
-                    displayName: res.data?.displayName,
-                    session_id: res.data?.session_id,
-                    credits: res.data?.credits,
-                }));
-
-                dispatch(setStyle({
-                    ...styleState.style,
-                    displayLoadingScreen: false,
-                }))
-
                 interval = setInterval(() => {
                     axios.get(`/api/poker?action=update_state&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(newRes => {
                         if (newRes.data?.success) {
@@ -55,12 +43,36 @@ const PokerHeader = () => {
                             if (newRes.data?.pokerGame?.player?.credits !== playerState.player.credits && newRes.data?.pokerGame?.player?.credits > 0) {
                                 dispatch(setPlayer({
                                     ...playerState.player,
+                                    displayName: res.data?.displayName,
+                                    session_id: res.data?.session_id,
                                     credits: newRes.data?.pokerGame?.player?.credits,
                                 }))
                             }
                         }
+
+                        dispatch(setStyle({
+                            ...styleState.style,
+                            displayLoadingScreen: false,
+                            notification: {
+                                ...styleState.style.notification,
+                                show: false,
+                            },
+                            lostConnectionInfo: {
+                                show: false,
+                                message: ''
+                            }
+                        }))
+                    }).catch(error => {
+                        dispatch(setStyle({
+                            ...styleState.style,
+                            displayLoadingScreen: false,
+                            lostConnectionInfo: {
+                                show: true,
+                                message: 'Game will be played until the end upon server gets live. You cannot continue your game, but the money earned / lost will be updated.'
+                            }
+                        }))
                     });
-                }, 2000);
+                }, 1000);
             }
             else {
                 dispatch(setStyle({

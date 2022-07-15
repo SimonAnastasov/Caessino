@@ -5,7 +5,7 @@ require('dotenv').config();
 import { game, drawASingleCard, getInitialCards, calculateHandValue } from './gameStates';
 import { calculateEarnings, calculateSideBetEarnings } from './calculateEarnings';
 
-let rooms = []
+import { rooms, update_rooms_to_database } from '../postgre/index'
 
 /**
  * Set up a room
@@ -42,6 +42,8 @@ export default async function handler(req, res) {
           success: true,
           game: rooms[session_id],
         })
+
+        update_rooms_to_database();
 
         return ;
       }
@@ -98,6 +100,8 @@ export default async function handler(req, res) {
               earnings: rooms[session_id].earnings,
               credits: postgreRes.data?.credits,
             })
+
+            update_rooms_to_database();
           }
           else {
             res.json({
@@ -149,6 +153,8 @@ export default async function handler(req, res) {
                 earnings: rooms[session_id].earnings,
                 credits: postgreRes.data?.credits,
               })
+            
+              update_rooms_to_database();
             }
             else {
               res.json({
@@ -165,6 +171,8 @@ export default async function handler(req, res) {
             outcome: rooms[session_id].outcome,
             earnings: rooms[session_id].earnings,
           })
+            
+          update_rooms_to_database();
         }
 
         return ;
@@ -211,6 +219,8 @@ export default async function handler(req, res) {
                 sideBetEarnings: rooms[session_id].sideBetEarnings,
                 credits: postgreRes.data?.credits,
               })
+            
+              update_rooms_to_database();
             }
             else {
               res.json({
@@ -228,6 +238,8 @@ export default async function handler(req, res) {
             sideBetOutcome: rooms[session_id].sideBetOutcome,
             sideBetEarnings: rooms[session_id].sideBetEarnings,
           })
+            
+          update_rooms_to_database();
         }
 
         return ;
@@ -269,6 +281,8 @@ export default async function handler(req, res) {
               status: rooms[session_id].status,
               credits: postgreRes.data?.credits,
             })
+            
+            update_rooms_to_database();
           }
         });
         
@@ -307,6 +321,8 @@ export default async function handler(req, res) {
               status: rooms[session_id].status,
               credits: postgreRes.data?.credits,
             })
+            
+            update_rooms_to_database();
           }
           else {
             res.json({
@@ -339,6 +355,8 @@ export default async function handler(req, res) {
       res.json({
         success: true,
       })
+            
+      update_rooms_to_database();
     }
 
     /**
@@ -389,6 +407,8 @@ export default async function handler(req, res) {
             session_id: postgreRes.data?.session_id,
             credits: postgreRes.data?.credits,
           })
+            
+          update_rooms_to_database();
         }
         else {
           res.json({

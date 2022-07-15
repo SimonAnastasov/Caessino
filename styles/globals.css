@@ -417,13 +417,26 @@ header.header nav.mainHeaderNavigation ul li {
   margin-left: 5rem;
 }
 
+.manageCreditsScreen .inlineAlert {
+  font-size: 1.5rem !important;
+  cursor: auto;
+}
+
 .manageCreditsScreen svg {
+  z-index: 100;
   cursor: pointer;
   font-size: 2.5rem;
   color: white;
 }
 
-.manageCreditsScreen > div h1 {
+.manageCreditsScreen > div {
+  top: 0%;
+  -webkit-transform: translate(-50%, 0);
+          transform: translate(-50%, 0);
+  width: 100%;
+}
+
+.manageCreditsScreen > div h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -433,8 +446,73 @@ header.header nav.mainHeaderNavigation ul li {
   color: white;
 }
 
-.manageCreditsScreen > div button {
+.manageCreditsScreen > div button span {
+  color: white;
+}
+
+.manageCreditsScreen > div > div:not(.main) {
+  margin-top: 5vh;
+  height: 15vh;
+}
+
+.manageCreditsScreen > div > div.main {
+  height: 70vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.manageCreditsScreen > div > div.main > div {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.manageCreditsScreen > div > div.main > div .fs-inputs-container {
+  width: 40%;
+}
+
+.manageCreditsScreen > div > div.main > div .fs-inputs-container > div {
   width: 100%;
+}
+
+.manageCreditsScreen > div > div.main > div .fs-inputs-container > div label {
+  color: white;
+}
+
+.manageCreditsScreen > div > div.main > div .fs-inputs-container > div span {
+  color: #ead24d;
+}
+
+.manageCreditsScreen > div > div.main > div .fs-inputs-container > div input {
+  font-size: 1.2rem;
+  width: 100%;
+  text-align: center;
+}
+
+.complainScreen .inlineAlert {
+  cursor: auto;
+}
+
+.complainScreen > div > div textarea {
+  width: 50vw;
+  height: 40vh;
+  font-size: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
 }
 
 .inlineAlert {
@@ -453,6 +531,15 @@ header.header nav.mainHeaderNavigation ul li {
   */
 .loadingScreen h1 {
   font-size: 5rem;
+}
+
+.lostConnectionScreen h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.lostConnectionScreen h3:nth-child(2) {
+  color: white;
 }
 
 /**

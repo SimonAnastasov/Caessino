@@ -7,6 +7,7 @@ import Loading from '../Loading'
 import Alert from '../Alert'
 import Notification from '../Notification'
 import Sections from './Sections'
+import LostConnection from '../LostConnection'
 
 const Roulette = () => {
   return (
@@ -24,6 +25,8 @@ const Roulette = () => {
       <Alert onTop="true"/>
 
       <Notification/>
+
+      <LostConnection/>
     </div>
   )
 }

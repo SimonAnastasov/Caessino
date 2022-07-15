@@ -9,6 +9,7 @@ import DisplayBet from '../../components/blackjack/DisplayBet'
 import Loading from '../Loading'
 import Alert from '../Alert'
 import Notification from '../Notification'
+import LostConnection from '../LostConnection'
 
 const Blackjack = () => {
   return (
@@ -30,6 +31,8 @@ const Blackjack = () => {
       <Alert/>
 
       <Notification/>
+
+      <LostConnection/>
     </div>
   )
 }

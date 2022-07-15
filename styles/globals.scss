@@ -399,14 +399,24 @@ header.header {
 }
 
 .manageCreditsScreen {
+  .inlineAlert {
+    font-size: 1.5rem !important;
+    cursor: auto;
+  }
+
   svg {
+    z-index: 100;
     cursor: pointer;
     font-size: 2.5rem;
     color: white;
   }
 
   &>div {
-    h1 {
+    top: 0%;
+    transform: translate(-50%, 0);
+    width: 100%;
+
+    h2 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
     }
@@ -417,7 +427,71 @@ header.header {
     }
 
     button {
-      width: 100%;
+      span {
+        color: white;
+      }
+    }
+
+    &>div:not(.main) {
+      margin-top: 5vh;
+      height: 15vh;
+    }
+  
+    &>div.main {
+      height: 70vh;
+
+      display: flex;
+
+      &>div {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+
+        .fs-inputs-container {
+          width: 40%;
+
+          &>div {
+            width: 100%;
+
+            label {
+              color: white;
+            }
+
+            span {
+              color: #ead24d;
+            }
+
+            input {
+              font-size: 1.2rem;
+              width: 100%;
+
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.complainScreen {
+  .inlineAlert {
+    cursor: auto;
+  }
+
+  &>div {
+    &>div {
+      textarea {
+        width: 50vw;
+        height: 40vh;
+        font-size: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+      }
     }
   }
 }
@@ -441,6 +515,17 @@ header.header {
 .loadingScreen {
   h1 {
     font-size: 5rem;
+  }
+}
+
+.lostConnectionScreen {
+  h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+
+    &:nth-child(2) {
+      color: white;
+    }
   }
 }
 

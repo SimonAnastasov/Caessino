@@ -274,6 +274,192 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- POST ----------------------/
+     * Deposits money from credit card to game account.
+     * @action register
+     * @param session_id
+     * @param data
+     */
+    if (body?.action === 'deposit') {
+      // checks
+      if (body?.session_id == "undefined" || body?.session_id == "null" || body?.session_id == "") {
+        res.json({
+          success: false,
+          message: 'You are not logged in. Please log in first.',
+        });
+        return ;
+      }
+      if (body?.data?.name == "undefined" || body?.data?.name == "null" || body?.data?.name == "") {
+        res.json({
+          success: false,
+          message: 'Name field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.card == "undefined" || body?.data?.card == "null" || body?.data?.card == "") {
+        res.json({
+          success: false,
+          message: 'Card numbers field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.expire == "undefined" || body?.data?.expire == "null" || body?.data?.expire == "") {
+        res.json({
+          success: false,
+          message: 'Expiration date field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.ccv == "undefined" || body?.data?.ccv == "null" || body?.data?.ccv == "") {
+        res.json({
+          success: false,
+          message: 'CCV field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.amount == "undefined" || body?.data?.amount == "null" || body?.data?.amount == "") {
+        res.json({
+          success: false,
+          message: 'Amount field cannot be empty',
+        });
+        return ;
+      }
+
+      let session = sessions.find(session => session.id === body?.session_id)
+
+      if (session) {
+        if (parseInt(body.data.amount) > 0) {
+          session.credits = session.credits + parseInt(body.data.amount)
+
+          pool.query('UPDATE players SET credits = $1 WHERE username = $2', [session.credits, session.username], (error, results) => {
+            if (error) throw error;
+            
+            res.json({
+              success: true,
+              credits: session.credits
+            })
+          });
+        }
+      }
+    }
+
+    /**
+     * /---------------------- POST ----------------------/
+     * Withdraws money from game account to personal account.
+     * @action register
+     * @param session_id
+     * @param data
+     */
+     if (body?.action === 'withdraw') {
+      // checks
+      if (body?.session_id == "undefined" || body?.session_id == "null" || body?.session_id == "") {
+        res.json({
+          success: false,
+          message: 'You are not logged in. Please log in first.',
+        });
+        return ;
+      }
+      if (body?.data?.citibank == "undefined" || body?.data?.citibank == "null" || body?.data?.citibank == "") {
+        res.json({
+          success: false,
+          message: 'Bank name field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.iban == "undefined" || body?.data?.iban == "null" || body?.data?.iban == "") {
+        res.json({
+          success: false,
+          message: 'IBAN code field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.bic == "undefined" || body?.data?.bic == "null" || body?.data?.bic == "") {
+        res.json({
+          success: false,
+          message: 'BIC code field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.beneficiary == "undefined" || body?.data?.beneficiary == "null" || body?.data?.beneficiary == "") {
+        res.json({
+          success: false,
+          message: 'Beneficiary name field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.address == "undefined" || body?.data?.address == "null" || body?.data?.address == "") {
+        res.json({
+          success: false,
+          message: 'Bank address field cannot be empty',
+        });
+        return ;
+      }
+      if (body?.data?.amount == "undefined" || body?.data?.amount == "null" || body?.data?.amount == "") {
+        res.json({
+          success: false,
+          message: 'Amount field cannot be empty',
+        });
+        return ;
+      }
+
+      let session = sessions.find(session => session.id === body?.session_id)
+
+      if (session) {
+        if (parseInt(body.data.amount) > 0) {
+          session.credits = Math.max(session.credits - parseInt(body.data.amount), 0)
+
+          pool.query('UPDATE players SET credits = $1 WHERE username = $2', [session.credits, session.username], (error, results) => {
+            if (error) throw error;
+
+            res.json({
+              success: true,
+              credits: session.credits
+            })
+          });
+        }
+      }
+    }
+
+    /**
+     * /---------------------- POST ----------------------/
+     * Sends a complaint.
+     * @action complain
+     * @param session_id
+     * @param description
+     */
+     if (body?.action === 'complain') {
+      // checks
+      if (body?.session_id == "undefined" || body?.session_id == "null" || body?.session_id == "") {
+        res.json({
+          success: false,
+          message: 'You are not logged in. Please log in first.',
+        });
+        return ;
+      }
+      if (body?.description == "undefined" || body?.description == "null" || body?.description == "") {
+        res.json({
+          success: false,
+          message: 'You cannot submit an empty complaint.',
+        });
+        return ;
+      }
+
+      let session = sessions.find(session => session.id === body.session_id)
+
+      if (session) {
+        // date, by, description, answered
+        const date = new Date();
+        pool.query('INSERT INTO complaints (date, by, description, answered) VALUES ($1, $2, $3, $4)', [date, session.username, body.description, false], (error, complaintResults) => {
+          if (error) throw error;
+
+          res.json({
+            success: true,
+          })
+        });
+      }
+    }
+
+    /**
+     * /---------------------- POST ----------------------/
      * Checks if the entered account info is good, and registers a new user in the database if so.
      * @action register
      * @param username
@@ -538,4 +724,41 @@ export async function load_game_from_database() {
   });
 }
 load_game_from_database();
- 
+
+/**
+ *  Blackjack game data
+ */
+export var rooms = []
+  
+export function update_rooms_to_database() {
+  let tmpRooms = [];
+  
+  for (let key in rooms) {
+    if (key === "loaded") continue ;
+
+    tmpRooms.push(rooms[key]);
+    tmpRooms[tmpRooms.length - 1].id = key;
+  }
+
+  pool.query('UPDATE blackjack SET data = $1 WHERE identifier = $2', [JSON.stringify(tmpRooms), 'blackjack_data'], (error, results) => {
+    if (error) throw error;
+  });
+}
+     
+export async function load_rooms_from_database() {
+  pool.query('SELECT data FROM blackjack WHERE identifier = $1', ['blackjack_data'], (error, results) => {
+    if (error) throw error;
+
+    if (results?.rows[0]?.data) {
+      const tmpRooms = JSON.parse(results.rows[0].data);
+
+      tmpRooms.forEach(room => {
+        rooms[room.id] = {...room, id: ''}
+      })
+      
+      rooms["loaded"] = true;
+    }
+  });
+}
+load_rooms_from_database();
+  

@@ -55,6 +55,34 @@ const initialState = {
         },
         // manage credits
         displayManageCreditsScreen: false,
+        displayDepositModal: false,
+        depositModalInputs: {
+            name: '',
+            card: '',
+            expire: '',
+            ccv: '',
+            amount: '',
+        },
+        displayWithdrawModal: false,
+        withdrawModalInputs: {
+            citibank: '',
+            iban: '',
+            bic: '',
+            beneficiary: '',
+            address: '',
+            amount: '',
+        },
+        // complain
+        displayComplainScreen: false,
+        complainScreenInfo: {
+            setFocus: true,
+            description: '',
+        },
+        // lost connection
+        lostConnectionInfo: {
+            show: false,
+            message: ''
+        }
     },
     // blackjack
     blackjack: {

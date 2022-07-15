@@ -78,10 +78,36 @@ const RouletteHeader = () => {
                             if (newRes.data?.rouletteGame?.player?.credits !== playerState.player.credits && newRes.data?.rouletteGame?.player?.credits > 0) {
                                 dispatch(setPlayer({
                                     ...playerState.player,
+                                    displayName: res.data?.displayName,
+                                    session_id: res.data?.session_id,
                                     credits: newRes.data?.rouletteGame?.player?.credits,
                                 }))
                             }
                         }
+
+                        if (newRes.data?.extraAction && newRes.data?.extraAction !== "spin_wheel") {
+                            dispatch(setStyle({
+                                ...styleState.style,
+                                displayLoadingScreen: false,
+                                notification: {
+                                    ...styleState.style.notification,
+                                    show: false,
+                                },
+                                lostConnectionInfo: {
+                                    show: false,
+                                    message: ''
+                                }
+                            }))
+                        }
+                    }).catch(error => {
+                        dispatch(setStyle({
+                            ...styleState.style,
+                            displayLoadingScreen: false,
+                            lostConnectionInfo: {
+                                show: true,
+                                message: 'Game will resume upon reconnection to the server.'
+                            }
+                        }))
                     });
                 }, 1000);
 
@@ -96,11 +122,6 @@ const RouletteHeader = () => {
                     },
                     showCoin: false,
                 }));
-
-                dispatch(setStyle({
-                    ...styleState.style,
-                    displayLoadingScreen: false,
-                }))
             }
             else {
                 dispatch(setStyle({

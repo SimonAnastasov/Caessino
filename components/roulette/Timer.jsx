@@ -1,17 +1,9 @@
 import React from 'react'
 
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import { setPlayer, setRouletteGame } from '../../redux/reducers/playerSlice';
-
-import axios from 'axios';
-import { setRoulette, setStyle } from '../../redux/reducers/styleSlice';
+import { useSelector } from 'react-redux'
 
 const Timer = () => {
-    const dispatch = useDispatch();
-
     const playerState = useSelector(state => state.player);
-    const styleState = useSelector(state => state.style);
 
     function getTimer() {
         const timer = playerState.rouletteGame.game.timeToStart;

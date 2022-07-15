@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setPoker } from '../../../redux/reducers/styleSlice';
 
 import axios from 'axios';
-import { setPokerGame } from '../../../redux/reducers/playerSlice';
 
 const PickATable = () => {
     const ref = useRef(null);

@@ -53,6 +53,13 @@ const Header = () => {
     })
   }
 
+  function complain() {
+    dispatch(setStyle({
+      ...styleState.style,
+      displayComplainScreen: true,
+    }))
+  }
+
   function showStats() {
     axios.get(`/api/postgre?action=get_stats&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
       if (res.data?.success) {
@@ -86,6 +93,8 @@ const Header = () => {
     dispatch(setStyle({
       ...styleState.style,
       displayManageCreditsScreen: true,
+      displayDepositModal: false,
+      displayWithdrawModal: false,
     }))
   }
 
@@ -143,7 +152,8 @@ const Header = () => {
             ) : (
               <>
                 <li onClick={() => {manageCredits()}}>Manage Credits</li>
-                <li onClick={() => {showStats()}}>Stats</li>
+                <li onClick={() => {showStats()}}>Statistics</li>
+                <li onClick={() => {complain()}}>Complain</li>
                 <li onClick={() => {logout()}}>Logout</li>
               </>
             )}

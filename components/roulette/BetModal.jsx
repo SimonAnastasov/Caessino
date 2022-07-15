@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setRoulette } from '../../redux/reducers/styleSlice';
 
 import axios from 'axios';
-import { setPlayer, setRouletteGame } from '../../redux/reducers/playerSlice';
 
 const BetModal = () => {
     const dispatch = useDispatch();

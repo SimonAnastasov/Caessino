@@ -7,6 +7,7 @@ import Loading from '../Loading'
 import Alert from '../Alert'
 import Notification from '../Notification'
 import PokerSections from './PokerSections'
+import LostConnection from '../LostConnection'
 
 const Poker = () => {
   return (
@@ -24,6 +25,8 @@ const Poker = () => {
       <Alert/>
 
       <Notification/>
+
+      <LostConnection/>
     </div>
   )
 }

@@ -10,6 +10,7 @@ import Alert from '../components/Alert'
 import Notification from '../components/Notification'
 import Stats from '../components/Stats'
 import ManageCredits from '../components/ManageCredits'
+import ComplainScreen from '../components/Complain'
 
 export default function Home() {
   return (
@@ -48,6 +49,8 @@ export default function Home() {
       <Stats/>
 
       <ManageCredits/>
+
+      <ComplainScreen/>
     </div>
   )
 }
