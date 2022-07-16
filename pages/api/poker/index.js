@@ -4,9 +4,9 @@ require('dotenv').config();
 
 import { createTable, getRestrictedTablesArray, getRestrictedTableArray, getTable, getTableAndPlayer } from './gameStates';
 
-import { drawASingleCard, setNextPlayerIdx, progressRoundIfNeeded, progressRoundTillTheEnd } from './tableSpecific'
+import { drawASingleCard, setNextPlayerIdx, progressRoundIfNeeded } from './tableSpecific'
 
-import { tables, cleanTables, update_tables_to_database, load_tables_from_database } from '../postgre/index'
+import { update_tables_to_database } from '../postgre/index'
 
 /**
  * ********************* BEGIN OF REQUEST HANDLER *********************

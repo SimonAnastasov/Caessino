@@ -323,6 +323,13 @@ export default function handler(req, res) {
         });
         return ;
       }
+      if (parseInt(body?.data?.amount) > 5000) {
+        res.json({
+          success: false,
+          message: 'Failed to deposit. Insufficient credit on card.',
+        });
+        return ;
+      }
 
       let session = sessions.find(session => session.id === body?.session_id)
 
@@ -337,6 +344,8 @@ export default function handler(req, res) {
               success: true,
               credits: session.credits
             })
+            
+            update_sessions_to_database();
           });
         }
       }
@@ -414,6 +423,8 @@ export default function handler(req, res) {
               success: true,
               credits: session.credits
             })
+
+            update_sessions_to_database();
           });
         }
       }
@@ -761,4 +772,3 @@ export async function load_rooms_from_database() {
   });
 }
 load_rooms_from_database();
-  

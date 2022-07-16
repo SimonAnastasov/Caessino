@@ -43,7 +43,7 @@ const ManageCredits = () => {
                 status: 'success',
             } : action === 'withdraw' ? {
                 show: true,
-                text: `Withdrawed $${styleState.style.withdrawModalInputs.amount} successfully`,
+                text: `Withdrew $${Math.min(styleState.style.withdrawModalInputs.amount, playerState.player.credits)} successfully`,
                 status: 'success',
             } : {
                 show: false,

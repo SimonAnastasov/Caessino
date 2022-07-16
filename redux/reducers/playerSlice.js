@@ -13,6 +13,8 @@ const initialState = {
         playerCards: [],
         dealerCards: [],
         sideBetName: '',
+        betAmount: 0,
+        sideBetAmount: 0,
     },
     rouletteGame: {
         game: {

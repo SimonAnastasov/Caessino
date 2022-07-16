@@ -85,6 +85,9 @@ export function addPlayer(session_id, name) {
             gotResults: false,
         })
     }
+    else {
+        game.players[game.players.map(e=>e.session_id).indexOf(session_id)].credits = -1;
+    }
 }
 
 export function getPlayer(session_id) {

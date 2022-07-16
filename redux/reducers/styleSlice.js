@@ -103,6 +103,7 @@ const initialState = {
                 maxCredits: 0,
             }
         },
+        sideBetName: '',
         texts: {
             sideBetsChooseCreditsText: '',
             sideBetsPaysText: '',

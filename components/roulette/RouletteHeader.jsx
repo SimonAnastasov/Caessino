@@ -137,6 +137,10 @@ const RouletteHeader = () => {
                 router.push('/');
             }
         });
+
+        return () => {
+            if (interval !== null) clearInterval(interval);
+        };
     }, []);
 
     return (

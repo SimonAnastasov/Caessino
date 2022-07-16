@@ -1,3 +1,5 @@
+import { rooms } from "../postgre";
+
 const singleDeck = ["SA", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "SX", "SJ", "SQ", "SK",
                     "HA", "H2", "H3", "H4", "H5", "H6", "H7", "H8", "H9", "HX", "HJ", "HQ", "HK",
                     "CA", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "CX", "CJ", "CQ", "CK",
@@ -10,6 +12,7 @@ const deck = singleDeck.concat(singleDeck).concat(singleDeck).concat(singleDeck)
  * Sample game state (Begining of the game)
  */
 export let game = {
+  credits: -1,
   deck: [...deck],
   status: '_1_room_created',      // statuses: _1_room_created, _2_made_initial_bet, _3_made_side_bet, _4_cards_on_the_table, _5_game_over
   playerCards: [],
@@ -22,6 +25,33 @@ export let game = {
   earnings: 0,
   sideBetOutcome: '',
   sideBetEarnings: 0,
+  messageTitle: '',
+  messageDescription: '',
+  betOutcomeMessageShown: true,
+  sideBetOutcomeMessageShown: true,
+}
+
+export function getGame(session_id) {
+  if (rooms[session_id] !== undefined) {
+    return {
+      success: true,
+      game: rooms[session_id],
+    }
+  }
+
+  return {
+      success: false,
+      game: {...game, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards]},
+  };
+}
+
+export function getRestrictedGameObject(session_id) {
+  const { success, game } = getGame(session_id)
+
+  return {
+    ...game,
+    dealerCards: game.status.includes('_5_') ? game.dealerCards : game.dealerCards.length > 0 ? [game.dealerCards[0]].concat(['back']) : [],
+  }
 }
 
 /**

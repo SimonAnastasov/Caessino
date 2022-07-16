@@ -88,6 +88,10 @@ const PokerHeader = () => {
                 router.push('/');
             }
         });
+
+        return () => {
+            if (interval !== null) clearInterval(interval);
+        };
     }, [])
 
     function leaveTable() {

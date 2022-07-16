@@ -2,7 +2,7 @@ import axios from 'axios';
 
 require('dotenv').config();
 
-import { game, drawASingleCard, getInitialCards, calculateHandValue } from './gameStates';
+import { game, drawASingleCard, getInitialCards, calculateHandValue, getGame, getRestrictedGameObject } from './gameStates';
 import { calculateEarnings, calculateSideBetEarnings } from './calculateEarnings';
 
 import { rooms, update_rooms_to_database } from '../postgre/index'
@@ -38,19 +38,30 @@ export default async function handler(req, res) {
       if (rooms[session_id] !== undefined && rooms[session_id].status.substr(1, 1) === '5') {
         rooms[session_id] = {...game, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards]};
 
-        res.json({
-          success: true,
-          game: rooms[session_id],
-        })
+        rooms[session_id].betOutcomeMessageShown = true;
 
         update_rooms_to_database();
-
-        return ;
       }
 
-      res.json({
-        success: false,
-      })
+      res.end();
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
+     * If game status is _4_cards_on_the_table, turn off the alert for side bet outcome
+     * @action continue_from_side_bet
+     * @param session_id
+     */
+     if (req.query.action === 'continue_from_side_bet' && req.query?.session_id) {
+      const session_id = req.query.session_id;
+
+      if (rooms[session_id] !== undefined && rooms[session_id].status.substr(1, 1) === '4') {
+        rooms[session_id].sideBetOutcomeMessageShown = true;
+
+        update_rooms_to_database();
+      }
+
+      res.end();
     }
 
     /**
@@ -87,10 +98,30 @@ export default async function handler(req, res) {
 
         room.earnings = calculateEarnings(room);
 
+        if (room.outcome === 'draw') {
+          room.messageTitle = 'Draw!';
+          room.messageDescription = `You got your $${room.earnings} back`
+        }
+        else if (room.outcome === 'player_won') {
+          room.messageTitle = 'You won!';
+          room.messageDescription = `You won $${room.earnings}`
+        }
+        else if (room.outcome === 'dealer_busted') {
+          room.messageTitle = `Dealer ${room.dealerName} busted!`;
+          room.messageDescription = `You won $${room.earnings}`
+        }
+        else if (room.outcome === 'player_lost') {
+          room.messageTitle = 'You lost!';
+          room.messageDescription = `You lost $${-1*room.earnings}`
+        }
+        room.betOutcomeMessageShown = false;
+
         rooms[session_id] = room;
 
         axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${session_id}&credits=${room.earnings}&game=blackjack&outcome=${room.outcome}`).then(postgreRes => {
           if (postgreRes.data?.success) {
+            rooms[session_id].credits = postgreRes.data?.credits;
+
             res.json({
               success: true,
               status: rooms[session_id].status,
@@ -138,13 +169,20 @@ export default async function handler(req, res) {
         if (calculateHandValue(room.playerCards) > 21) {
           room.status = '_5_game_over';
           room.outcome = 'player_busted';
-
+          
           room.earnings = calculateEarnings(room);
+
+          room.messageTitle = 'You busted!';
+          room.messageDescription = `You lost $${-1*room.earnings}`
+          
+          room.betOutcomeMessageShown = false;
 
           rooms[session_id] = room;
 
           axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${session_id}&credits=${room.earnings}&game=blackjack&outcome=${room.outcome}`).then(postgreRes => {
             if (postgreRes.data?.success) {
+              rooms[session_id].credits = postgreRes.data?.credits;
+
               res.json({
                 success: true,
                 status: rooms[session_id].status,
@@ -206,48 +244,32 @@ export default async function handler(req, res) {
           room.sideBetEarnings = calculateSideBetEarnings(room);
           room.sideBetOutcome = room.sideBetEarnings > 0 ? 'side_bet_won' : 'side_bet_lost';
 
+          if (room.sideBetOutcome === 'side_bet_won') {
+            room.messageTitle = `You won the side bet!`;
+            room.messageDescription = `You won $${room.sideBetEarnings}`
+          }
+          else if (room.sideBetOutcome === 'side_bet_lost') {
+            room.messageTitle = `You lost the side bet!`;
+            room.messageDescription = `You lost $${-1*room.sideBetEarnings}`
+          }
+
+          room.sideBetOutcomeMessageShown = false;
+          
           rooms[session_id] = room;
+
+          update_rooms_to_database();
 
           axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${session_id}&credits=${room.sideBetEarnings}`).then(postgreRes => {
             if (postgreRes.data?.success) {
-              res.json({
-                success: true,
-                status: rooms[session_id].status,
-                playerCards: rooms[session_id].playerCards,
-                dealerCards: Array(rooms[session_id].dealerCards[0]).concat('back'),
-                sideBetOutcome: rooms[session_id].sideBetOutcome,
-                sideBetEarnings: rooms[session_id].sideBetEarnings,
-                credits: postgreRes.data?.credits,
-              })
-            
+              rooms[session_id].credits = postgreRes.data?.credits;
+
               update_rooms_to_database();
-            }
-            else {
-              res.json({
-                success: false,
-              })
             }
           });
         }
-        else {
-          res.json({
-            success: true,
-            status: rooms[session_id].status,
-            playerCards: rooms[session_id].playerCards,
-            dealerCards: Array(rooms[session_id].dealerCards[0]).concat('back'),
-            sideBetOutcome: rooms[session_id].sideBetOutcome,
-            sideBetEarnings: rooms[session_id].sideBetEarnings,
-          })
-            
-          update_rooms_to_database();
-        }
-
-        return ;
       }
 
-      res.json({
-        success: false,
-      })
+      res.end();
     }
 
     /**
@@ -258,7 +280,7 @@ export default async function handler(req, res) {
      * @param bet
      * @param betName
      */
-     if (req.query.action === 'make_side_bet' && req.query?.session_id && req.query?.bet && req.query?.betName) {
+    if (req.query.action === 'make_side_bet' && req.query?.session_id && req.query?.bet && req.query?.betName) {
       const session_id = req.query.session_id;
 
       if (rooms[session_id] !== undefined && rooms[session_id].status.substr(1, 1) === '2') {
@@ -268,6 +290,8 @@ export default async function handler(req, res) {
 
         axios.get(`${process.env.HOME_URL}/api/postgre?action=take_credits&session_id=${session_id}&credits=${req.query.bet}`).then(postgreRes => {
           if (postgreRes.data?.success) {
+            rooms[session_id].credits = postgreRes.data?.credits;
+
             const room = rooms[session_id];
 
             room.sideBet = parseInt(req.query.bet);
@@ -278,20 +302,15 @@ export default async function handler(req, res) {
 
             res.json({
               success: true,
-              status: rooms[session_id].status,
-              credits: postgreRes.data?.credits,
             })
             
             update_rooms_to_database();
           }
+          else {
+            res.end();
+          }
         });
-        
-        return ;
       }
-
-      res.json({
-        success: false,
-      })
     }
     
     /**
@@ -309,34 +328,21 @@ export default async function handler(req, res) {
 
         axios.get(`${process.env.HOME_URL}/api/postgre?action=take_credits&session_id=${session_id}&credits=${req.query.bet}`).then(postgreRes => {
           if (postgreRes.data?.success) {
+            rooms[session_id].credits = postgreRes.data?.credits;
+
             const room = rooms[session_id];
 
             room.initialBet = parseInt(req.query.bet);
             room.status = '_2_made_initial_bet';
 
             rooms[session_id] = room;
-
-            res.json({
-              success: true,
-              status: rooms[session_id].status,
-              credits: postgreRes.data?.credits,
-            })
             
             update_rooms_to_database();
           }
-          else {
-            res.json({
-              success: false,
-            })
-          }
         });
-
-        return ;
       }
 
-      res.json({
-        success: false,
-      })
+      res.end();
     }
 
     /**
@@ -357,6 +363,23 @@ export default async function handler(req, res) {
       })
             
       update_rooms_to_database();
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
+     * Updates the state periodically
+     * @action update_state
+     * @param session_id
+     */
+     if (req.query.action === 'update_state' && req.query?.session_id) {
+      const session_id = req.query.session_id;
+
+      const { success, game } = getGame(session_id);
+
+      res.json({
+          success: true,
+          blackjackGame: getRestrictedGameObject(session_id),
+      })
     }
 
     /**
