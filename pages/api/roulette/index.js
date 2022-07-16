@@ -77,6 +77,7 @@ export default async function handler(req, res) {
                             y: req.query.coinPlacedY,
                         },
                         player.credits = postgreRes.data?.credits;
+                        player.lastActivity = Date.now();
                     }
                 });
             }
@@ -96,6 +97,7 @@ export default async function handler(req, res) {
             const { success, player } = getPlayer(session_id);
 
             let extraAction = "";
+            let extraAction2 = "";
             let magicNumber = -1;
             let winningBets = [];
 
@@ -106,6 +108,9 @@ export default async function handler(req, res) {
                     winningBets = game.winningBets;
 
                     player.gotResults = true;
+                }
+                if (game.timeToStart > game.COUNTDOWN_FROM + game.WAIT_BEFORE - 15) {
+                    extraAction2 = "keep_alert";
                 }
             }
 
@@ -120,6 +125,7 @@ export default async function handler(req, res) {
                     player: player,
                 },
                 extraAction: extraAction,
+                extraAction2: extraAction2,
                 magicNumber: magicNumber,
                 winningBets: winningBets,
             })
@@ -137,7 +143,7 @@ export default async function handler(req, res) {
 
             axios.get(`${process.env.HOME_URL}/api/postgre?action=check_if_logged_in&session_id=${session_id}`).then(postgreRes => {
                 if (postgreRes.data?.success) {
-                    addPlayer(session_id, postgreRes.data?.displayName);
+                    addPlayer(session_id, postgreRes.data?.displayName, postgreRes.data?.username);
                 
                     res.json({
                         success: true,

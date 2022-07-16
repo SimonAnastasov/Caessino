@@ -115,7 +115,8 @@ const Header = () => {
             dispatch(setPlayer({
               ...playerState.player,
               displayName: res.data?.displayName,
-              sesssion_id: res.data?.session_id,
+              username: res.data?.username,
+              session_id: res.data?.session_id,
               credits: res.data?.credits,
             }));
           }

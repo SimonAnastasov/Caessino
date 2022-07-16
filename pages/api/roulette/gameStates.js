@@ -25,6 +25,8 @@ export function resetGame() {
     game.winningBets = [];
     game.status = '_1_ongoing_timer';
 
+    let inactivePlayers = []
+
     game.players.forEach(player => {
         player.whichBets = [];
         player.betAmount = 0;
@@ -36,7 +38,19 @@ export function resetGame() {
         player.outcome = 'none';
         player.status = '_1_no_placed_bet';
         player.gotResults = false;
+
+        const d = Date.now();
+
+        if (d - player.lastActivity > 200000) {
+            inactivePlayers.push(player);
+        }
     })
+
+    for (let i = 0; i < inactivePlayers.length; i++) {
+        if (game.players.indexOf(inactivePlayers[i]) !== -1) {
+            game.players.splice(game.players.indexOf(inactivePlayers[i]), 1);
+        }
+    }
 }
 
 export function updateGameWithWinners() {
@@ -67,10 +81,12 @@ export function updateGameWithWinners() {
     }
 }
 
-export function addPlayer(session_id, name) {
+export function addPlayer(session_id, name, username) {
     if (game.players.map(e=>e.session_id).indexOf(session_id) === -1) {
         game.players.push({
+            lastActivity: Date.now(),
             session_id: session_id,
+            username: username,
             name: name,
             whichBets: [],
             coinPlaced: {

@@ -28,6 +28,16 @@ const RegisterScreen = () => {
         }
     }, 10);
 
+    function onChangeEmail(e) {
+        dispatch(setStyle({
+            ...styleState.style,
+            registerScreenInfo: {
+                ...styleState.style.registerScreenInfo,
+                email: e.target.value,
+            }
+        }))
+    }
+
     function onChangeUsername(e) {
         dispatch(setStyle({
             ...styleState.style,
@@ -85,6 +95,7 @@ const RegisterScreen = () => {
 
         axios.post('/api/postgre', {
             action: 'register',
+            email: styleState.style.registerScreenInfo.email,
             username: styleState.style.registerScreenInfo.username,
             displayName: styleState.style.registerScreenInfo.displayName,
             password: styleState.style.registerScreenInfo.password,
@@ -108,7 +119,7 @@ const RegisterScreen = () => {
                         },
                         notification: {
                             show: true,
-                            text: 'Successfully registered! Please Log In now.',
+                            text: 'Successfully registered! Please check your email and activate your account.',
                             status: 'success',
                         },
                         inlineAlertText: '',
@@ -129,12 +140,14 @@ const RegisterScreen = () => {
             <div className="fs-inputs-container">
                 {styleState.style.inlineAlertText.length > 0 && <span className="inlineAlert">{styleState.style.inlineAlertText}</span>}
                 <div>
+                    <span>Email:</span>
+                    <input ref={ref} type="text" onChange={(e) => {onChangeEmail(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.email} placeholder="john.doe@gmail.com"/>
                     <span>Username:</span>
-                    <input ref={ref} type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.username} placeholder="your username..."/>
+                    <input type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.username} placeholder="johndoe"/>
                     <span>Display Name:</span>
-                    <input type="text" onChange={(e) => {onChangeDisplayName(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.displayName} placeholder="your display name..."/>
+                    <input type="text" onChange={(e) => {onChangeDisplayName(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.displayName} placeholder="John Doe"/>
                     <span>Password:</span>
-                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.password} placeholder="your password..."/>
+                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.registerScreenInfo.password} placeholder="***************"/>
                     <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <button className="primaryButton" onClick={() => closeForm()}>Close Form</button>
                         <button className="secondaryButton" onClick={() => register()}>Register</button>

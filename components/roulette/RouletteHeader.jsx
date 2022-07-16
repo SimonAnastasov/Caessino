@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setRouletteGame, setPlayer } from '../../redux/reducers/playerSlice'
@@ -85,7 +85,7 @@ const RouletteHeader = () => {
                             }
                         }
 
-                        if (newRes.data?.extraAction && newRes.data?.extraAction !== "spin_wheel") {
+                        if (newRes.data?.extraAction !== "spin_wheel" && newRes.data?.extraAction2 !== "keep_alert") {
                             dispatch(setStyle({
                                 ...styleState.style,
                                 displayLoadingScreen: false,

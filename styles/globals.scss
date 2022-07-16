@@ -486,6 +486,8 @@ header.header {
   &>div {
     &>div {
       textarea {
+        background-color: rgb(195, 255, 210);
+
         width: 50vw;
         height: 40vh;
         font-size: 2rem;
@@ -519,6 +521,10 @@ header.header {
 }
 
 .lostConnectionScreen {
+  &>div {
+    text-align: center;
+  }
+
   h3 {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -526,6 +532,26 @@ header.header {
     &:nth-child(2) {
       color: white;
     }
+  }
+}
+
+.activateScreen {
+  &>div {
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+
+    &:nth-child(1) {
+      color: white;
+    }
+  }
+
+  button {
+    font-size: 1.8rem;
+    margin-top: 8rem;
   }
 }
 

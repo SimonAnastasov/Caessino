@@ -508,6 +508,7 @@ header.header nav.mainHeaderNavigation ul li {
 }
 
 .complainScreen > div > div textarea {
+  background-color: #c3ffd2;
   width: 50vw;
   height: 40vh;
   font-size: 2rem;
@@ -533,6 +534,10 @@ header.header nav.mainHeaderNavigation ul li {
   font-size: 5rem;
 }
 
+.lostConnectionScreen > div {
+  text-align: center;
+}
+
 .lostConnectionScreen h3 {
   font-size: 2rem;
   margin-bottom: 1rem;
@@ -540,6 +545,24 @@ header.header nav.mainHeaderNavigation ul li {
 
 .lostConnectionScreen h3:nth-child(2) {
   color: white;
+}
+
+.activateScreen > div {
+  text-align: center;
+}
+
+.activateScreen h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.activateScreen h3:nth-child(1) {
+  color: white;
+}
+
+.activateScreen button {
+  font-size: 1.8rem;
+  margin-top: 8rem;
 }
 
 /**

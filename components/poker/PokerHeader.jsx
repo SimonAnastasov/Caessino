@@ -33,6 +33,14 @@ const PokerHeader = () => {
 
         axios.get(`/api/poker?action=get_player_info_on_enter&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(res => {
             if (res.data?.success) {
+                dispatch(setPlayer({
+                    ...playerState.player,
+                    displayName: res.data?.displayName,
+                    username: res.data?.username,
+                    session_id: res.data?.session_id,
+                    credits: res.data?.credits,
+                }))
+
                 if (interval !== null) clearInterval(interval);
 
                 interval = setInterval(() => {

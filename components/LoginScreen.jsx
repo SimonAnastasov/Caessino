@@ -138,9 +138,9 @@ const LoginScreen = () => {
                 {styleState.style.inlineAlertText.length > 0 && <span className="inlineAlert" onClick={(e) => checkForLink(e)}>{styleState.style.inlineAlertText}</span>}
                 <div>
                     <span>Username:</span>
-                    <input ref={ref} type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.username} placeholder="your username..."/>
+                    <input ref={ref} type="text" onChange={(e) => {onChangeUsername(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.username} placeholder="johndoe"/>
                     <span>Password:</span>
-                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.password} placeholder="your password..."/>
+                    <input type="password" onChange={(e) => {onChangePassword(e)}} onKeyUp={(e) => keyUp(e)} value={styleState.style.loginScreenInfo.password} placeholder="****************"/>
                     <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                         <button className="primaryButton" onClick={() => closeForm()}>Close Form</button>
                         <button className="secondaryButton" onClick={() => login()}>Log In</button>

@@ -197,8 +197,9 @@ export default async function handler(req, res) {
          * @param session_id
          * @param tableId
          * @param displayName
+         * @param username
          */
-         if (req.query.action === 'join_a_table' && req.query?.session_id && req.query?.tableId && req.query?.displayName) {
+         if (req.query.action === 'join_a_table' && req.query?.session_id && req.query?.tableId && req.query?.displayName && req.query?.username) {
             if (req.query.tableId.length > 0) {
                 const { success } = getTableAndPlayer(req.query.session_id);
 
@@ -209,6 +210,7 @@ export default async function handler(req, res) {
                         table.players.push({
                             id: req.query.session_id,
                             table: req.query.tableId,
+                            username: req.query.username,
                             credits: 0,
                             status: '_1_just_entered',
                             displayName: req.query.displayName,
@@ -240,12 +242,13 @@ export default async function handler(req, res) {
          * @param session_id
          * @param displayName
          * @param tableName
+         * @param username
          */
-        if (req.query.action === 'create_a_table' && req.query?.session_id && req.query?.displayName && req.query?.tableName) {
+        if (req.query.action === 'create_a_table' && req.query?.session_id && req.query?.displayName && req.query?.tableName && req.query?.username) {
             const { success } = getTableAndPlayer(req.query.session_id);
 
             if (!success) {
-                createTable(req.query.session_id, req.query.displayName, req.query.tableName);
+                createTable(req.query.session_id, req.query.displayName, req.query.tableName, req.query.username);
             }
 
             update_tables_to_database();
@@ -304,6 +307,7 @@ export default async function handler(req, res) {
                     res.json({
                         success: true,
                         displayName: postgreRes.data?.displayName,
+                        username: postgreRes.data?.username,
                         session_id: postgreRes.data?.session_id,
                         credits: postgreRes.data?.credits,
                     })

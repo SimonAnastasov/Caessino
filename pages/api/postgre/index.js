@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const crypto = require('crypto');
 
+const nodemailer = require('nodemailer');
+
 import { progressRoundTillTheEnd } from '../poker/tableSpecific';
 
 const Pool = require('pg').Pool
@@ -213,6 +215,33 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Activates an user account if not activated.
+     * @action activate_account
+     * @param emailActivationId
+     */
+    if (req.query?.action === 'activate_account' && req.query?.emailActivationId) {
+      pool.query('SELECT * FROM users WHERE email_activation_id = $1', [req.query.emailActivationId], (error, results) => {
+        if (error) throw error;
+
+        if (results.rows.length > 0) {
+          pool.query('UPDATE users SET activated = $1 WHERE email_activation_id = $2', [true, req.query.emailActivationId], (error, results) => {
+            if (error) throw error;
+
+            res.json({
+              success: true,
+            })
+          });
+        }
+        else {
+          res.json({
+            success: false,
+          })
+        }
+      });
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
      * Checks if the player is logged in, and returns his session if so.
      * @action check_if_logged_in
      * @param session_id
@@ -225,6 +254,7 @@ export default function handler(req, res) {
         res.json({
           success: true,
           displayName: session.displayName,
+          username: session.username,
           session_id: session.id,
           credits: session.credits,
         })
@@ -253,10 +283,27 @@ export default function handler(req, res) {
         });
 
         sessions.splice(sessions.indexOf(session), 1);
-
-        axios.get(`${process.env.HOME_URL}/api/blackjack/?action=remove_room&session_id=${session_id}`);
-
         update_sessions_to_database();
+
+        // remove player from games:
+        if (rooms[session_id] !== undefined) {
+          delete rooms[session_id];
+          update_rooms_to_database();
+        }
+
+        if (game.players?.map(e=>e.session_id).indexOf(session_id) !== -1) {
+          game.players?.splice(game.players?.map(e=>e.session_id).indexOf(session_id), 1);
+          update_game_to_database();
+        }
+
+        tables.forEach(table => {
+          table.players?.forEach(player => {
+            if (player.id === session_id) {
+              player.isGhost = true;
+            }
+          })
+        })
+        update_tables_to_database();
       }
 
       res.json({
@@ -479,6 +526,20 @@ export default function handler(req, res) {
      */
     if (body?.action === 'register') {
       // checks
+      if (body?.email == "undefined" || body?.email == "null" || body?.email == "") {
+        res.json({
+          success: false,
+          message: 'Email is required',
+        });
+        return ;
+      }
+      if (!body?.email?.includes('@') || body?.email?.indexOf('@', body?.email?.indexOf('@')+1) !== -1) {
+        res.json({
+          success: false,
+          message: 'Not a valid email',
+        });
+        return ;
+      }
       if (body?.username == "undefined" || body?.username == "null" || body?.username == "") {
         res.json({
           success: false,
@@ -534,8 +595,10 @@ export default function handler(req, res) {
           return ;
         }
 
+        const emailActivationId = uuidv4();
+
         // store user in database
-        pool.query('INSERT INTO users (username, password, salt) VALUES ($1, $2, $3)', [body.username, hashedPassword, salt], (error, usersResults) => {
+        pool.query('INSERT INTO users (username, password, salt, email, email_activation_id, activated) VALUES ($1, $2, $3, $4, $5, $6)', [body.username, hashedPassword, salt, body.email, emailActivationId, false], (error, usersResults) => {
           if (error) throw error;
 
           pool.query('INSERT INTO players (username, display_name, credits) VALUES ($1, $2, $3)', [body.username, body.displayName, 1000], (error, playersResults) => {
@@ -543,6 +606,8 @@ export default function handler(req, res) {
 
             pool.query('INSERT INTO stats (username, blackjack_games, roulette_games, poker_games, blackjack_won_games, roulette_won_games, poker_won_games, money_bet, money_earned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [body.username, 0, 0, 0, 0, 0, 0, 0, 0], (error, statsResults) => {
               if (error) throw error;
+
+              sendMailForActivation(body.displayName, body.email, emailActivationId);
 
               res.json({
                 success: true,
@@ -603,10 +668,20 @@ export default function handler(req, res) {
         else {
           if (usersResults.rows.length > 0) {
             const user = usersResults.rows[0];
+
             const salt = user.salt;
             const hashedPassword = crypto.pbkdf2Sync(body.password, salt, 1000, 64, 'sha512').toString('hex');
 
             if (hashedPassword === user.password) {
+              if (user.activated === "false") {
+                res.json({
+                  success: false,
+                  message: 'Account not activated. Check your email.',
+                })
+
+                return ;
+              }
+
               pool.query('SELECT * FROM players WHERE username = $1', [body.username], (error, playersResults) => {
                 if (playersResults.rows.length > 0) {
                   let session = sessions.find(session => session.username === playersResults.rows[0].username)
@@ -657,6 +732,85 @@ export default function handler(req, res) {
   }
 }
 
+// Mailing
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GOOGLE_EMAIL,
+      pass: process.env.GOOGLE_APP_PASSWORD,
+  }
+})
+
+function sendMailForActivation(displayName, userEmail, emailActivationId) {
+  const message = {
+      from: process.env.GOOGLE_EMAIL,
+      to: userEmail,
+      subject: "Caessino - Activate your account",
+      html: `
+          <h4>Hello, ${displayName}</h4>
+          <p>Thank you for creating an account at Caessino. Just one more step and you can start enjoying the games!</p>
+          <p>To activate your account please follow this link: <a target="_blank" href="${process.env.HOME_URL}/activate/${emailActivationId}">Activate account</a>
+          <br/>
+          <p>Cheers and happy playing,</p>
+          <p>The Team ESS</p>
+      `
+  }
+
+  transporter.sendMail(message, (err, data) => {
+      if (err) {
+          console.log(err);
+      }
+  })
+}
+
+let mailSentTo = {
+  poker: [],
+  roulette: [],
+  blackjack: [],
+}
+function sendMailForGameCompletition(game, username, displayName) {
+  return ;
+
+  const msgPoker = 'Your game was played to the end by the computer with the following rules:<br/>1. No more bets were made by any player;<br/>2. Cards were dealt normally like they would be under normal circumstances;<br/>3. Credits were given to the winners and taken from the losers.';
+  const msgRoulette = 'If you reconnect immediately, you can catch this ongoing game. But don\'t worry if you can\'t! If you win, credits will be awarded to you.';
+  const msgBlackjack = 'You can now continue playing your game.';
+  
+  pool.query('SELECT * FROM users WHERE username = $1', [username], (error, results) => {
+    if (error) throw error;
+
+    if (results.rows.length > 0) {
+      const userEmail = results.rows[0].email;
+
+      if ((game === 'poker' && mailSentTo.poker.indexOf(userEmail) === -1) ||
+          (game === 'roulette' && mailSentTo.roulette.indexOf(userEmail) === -1) ||
+          (game === 'blackjack' && mailSentTo.blackjack.indexOf(userEmail) === -1))
+      {
+        const message = {
+          from: process.env.GOOGLE_EMAIL,
+          to: userEmail,
+          subject: "Caessino - Server is back online",
+          html: `
+            <h4>Hello, ${displayName}</h4>
+            <p>We are writing to inform you that the server is back online.</p>
+            <p>We know that you were in the middle of playing ${game}, and we apologize for the interrupt.</p>
+            <p>${game === 'poker' ? msgPoker : game === 'roulette' ? msgRoulette : msgBlackjack}</p>
+            <br/>
+            <p>All the best,</p>
+            <p>The Team ESS</p>
+            `
+        }
+
+        transporter.sendMail(message, (err, data) => {
+          if (err) {
+              console.log(err);
+          }
+        })
+
+        mailSentTo[game].push(userEmail)
+      }
+    }
+  });
+}
 
 /**
  * User session data
@@ -707,6 +861,16 @@ export async function load_tables_from_database() {
       }
     })
 
+    tables.forEach(table => {
+      if (table.ended) {
+        table.players?.forEach(player => {
+          if (!player.isGhost) {
+            sendMailForGameCompletition('poker', player.username, player.displayName);
+          }
+        })
+      }
+    })
+
     cleanTables();
 
     update_tables_to_database();
@@ -730,6 +894,10 @@ export async function load_game_from_database() {
     if (error) throw error;
 
     game = JSON.parse(results?.rows[0]?.data || []);
+
+    game.players?.forEach(player => {
+      sendMailForGameCompletition('roulette', player.username, player.name);
+    })
 
     game.loaded = true;
   });
@@ -765,6 +933,10 @@ export async function load_rooms_from_database() {
 
       tmpRooms.forEach(room => {
         rooms[room.id] = {...room, id: ''}
+      })
+
+      tmpRooms.forEach(room => {
+        sendMailForGameCompletition('blackjack', room.username, room.displayName);
       })
       
       rooms["loaded"] = true;

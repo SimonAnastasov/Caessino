@@ -53,7 +53,7 @@ export const samplePlayer = {
  * ********************* BEGIN OF FUNCTIONS *********************
  */
 
-export function createTable(playerId, playerName, tableName) {
+export function createTable(playerId, playerName, tableName, username) {
     const tableId = uuidv4();
 
     const table = {
@@ -74,6 +74,7 @@ export function createTable(playerId, playerName, tableName) {
         players: [{
             id: playerId,
             table: tableId,
+            username: username,
             credits: 0,
             status: '_1_just_entered',
             displayName: playerName,

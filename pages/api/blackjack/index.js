@@ -10,9 +10,9 @@ import { rooms, update_rooms_to_database } from '../postgre/index'
 /**
  * Set up a room
  */
-function createARoom(session_id) {
+function createARoom(session_id, displayName, username) {
   let room = {
-    ...game, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards],
+    ...game, displayName: displayName, username: username, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards],
   }
 
   rooms[session_id] = room;
@@ -240,6 +240,8 @@ export default async function handler(req, res) {
 
         rooms[session_id] = room;
 
+        update_rooms_to_database();
+
         if (room.sideBetName !== '' && room.sideBetName !== 'none') {
           room.sideBetEarnings = calculateSideBetEarnings(room);
           room.sideBetOutcome = room.sideBetEarnings > 0 ? 'side_bet_won' : 'side_bet_lost';
@@ -256,8 +258,6 @@ export default async function handler(req, res) {
           room.sideBetOutcomeMessageShown = false;
           
           rooms[session_id] = room;
-
-          update_rooms_to_database();
 
           axios.get(`${process.env.HOME_URL}/api/postgre/?action=add_credits&session_id=${session_id}&credits=${room.sideBetEarnings}`).then(postgreRes => {
             if (postgreRes.data?.success) {
@@ -347,26 +347,6 @@ export default async function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
-     * Remove a room from the rooms array.
-     * @action remove_room
-     * @param session_id
-     */
-    if (req.query.action === 'remove_room' && req.query?.session_id) {
-      const session_id = req.query.session_id;
-
-      if (rooms[session_id] !== undefined) {
-        delete rooms[session_id];
-      }
-      
-      res.json({
-        success: true,
-      })
-            
-      update_rooms_to_database();
-    }
-
-    /**
-     * /---------------------- GET ----------------------/
      * Updates the state periodically
      * @action update_state
      * @param session_id
@@ -398,7 +378,7 @@ export default async function handler(req, res) {
             // room exists
           }
           else {
-            createARoom(session_id);
+            createARoom(session_id, postgreRes.data?.displayName, postgreRes.data?.username);
           }
     
           let dealerCardsTmp = [];

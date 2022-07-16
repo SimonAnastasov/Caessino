@@ -31,11 +31,11 @@ const PickATable = () => {
     }
 
     function createATable() {
-        axios.get(`/api/poker?action=create_a_table&session_id=${localStorage.CAESSINO_SESSION_ID}&displayName=${playerState.player.displayName}&tableName=${styleState.poker.inputControls.tableName}`);
+        axios.get(`/api/poker?action=create_a_table&session_id=${localStorage.CAESSINO_SESSION_ID}&displayName=${playerState.player.displayName}&tableName=${styleState.poker.inputControls.tableName}&username=${playerState.player.username}`);
     }
 
     function joinATable(e) {
-        axios.get(`/api/poker?action=join_a_table&session_id=${localStorage.CAESSINO_SESSION_ID}&tableId=${e.target?.dataset?.table}&displayName=${playerState.player.displayName}`);
+        axios.get(`/api/poker?action=join_a_table&session_id=${localStorage.CAESSINO_SESSION_ID}&tableId=${e.target?.dataset?.table}&displayName=${playerState.player.displayName}&username=${playerState.player.username}`);
     }
 
     return (
