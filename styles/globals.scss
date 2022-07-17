@@ -339,6 +339,32 @@ header.header {
   }
 }
 
+.top-to-bottom-centered {
+  overflow-y: scroll;
+
+  &>div {
+    padding-block: 2rem;
+    width: 70vw;
+    margin-inline: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+
+    .link {
+      color: #fff3ae;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    
+  }
+}
+
 .fs-inputs-container {
   &>div {
     margin: auto;
@@ -556,8 +582,93 @@ header.header {
 }
 
 /**
-  * Component <- RegisterScreen
+  * Component <- LoginScreen
   */
+.loginScreen {
+  &.admin {
+    z-index: 50;
+  }
+}
+
+.complaintsScreen {
+  z-index: 20;
+
+  .complaint {
+    width: 100%;
+    padding: 2rem;
+
+    transition: all .2s linear;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+    &:hover {
+      box-shadow: 0 5px 25px rgba(0, 0, 0, .25);
+    }
+    
+    &:nth-child(2n+1) {
+      color: white;
+    }
+    
+    &>div:nth-child(1) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      &>* {
+        flex: 1;
+      }
+
+      &>div {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    textarea {
+      width: 100%;
+      height: 7rem;
+      margin-top: .5rem;
+      font-size: 1.2rem;
+      padding: .4rem;
+
+      background-color: rgb(195, 255, 210);
+    }
+
+    .answering {
+      margin-top: 1rem;
+
+      &>div {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+      }
+    }
+
+    .primaryButton, .secondaryButton {
+      font-size: 1rem;
+    }
+  }
+}
+
+.liveGamesScreen {
+  z-index: 20;
+}
+
+.dashboardScreen {
+  &.admin {
+    .fs-inputs-container {
+      transform: translate(-50%, -75%);
+
+      &>div {
+        gap: 10rem;
+
+        &>div {
+          width: 50vw;
+          display: flex;
+          justify-content: space-around;
+        }
+      }
+    }
+  }
+}
 
 /**
   * Primary Thingies

@@ -178,6 +178,42 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * /--------------------- ADMIN ----------------------/
+     * Get complaints from the players and show them to the admin
+     * @action get_complaints_as_admin
+     * @param admin_id
+     */
+     if (req.query?.action === 'get_complaints_as_admin' && req.query?.admin_id) {
+      const admin_id = req.query.admin_id
+      const adminSession = adminSessions.find(adminSession => adminSession.id === admin_id)
+
+      if (adminSession) {
+        pool.query('SELECT * FROM complaints', (error, results) => {
+          if (error) throw error;
+
+          if (results.rows.length > 0) {
+            res.json({
+              success: true,
+              complaints: results.rows,
+            })
+          }
+          else {
+            res.json({
+              success: false,
+            })
+          }
+        });
+        
+        return ;
+      }
+
+      res.json({
+        success: false,
+      })
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
      * Get stats for the player, so we can display them in the front end.
      * @action get_stats
      * @param session_id
@@ -479,6 +515,65 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- POST ----------------------/
+     * /---------------------- ADMIN ----------------------/
+     * Sends an answer to a complaint.
+     * @action send_complaint_answer_as_admin
+     * @param admin_id
+     * @param complaint
+     */
+     if (body?.action === 'send_complaint_answer_as_admin') {
+      // checks
+      if (body?.admin_id == "undefined" || body?.admin_id == "null" || body?.admin_id == "") {
+        res.json({
+          success: false,
+          message: 'You are not logged in. Please log in first.',
+        });
+        return ;
+      }
+      if (body?.complaint.by == "undefined" || body?.complaint.by == "null" || body?.complaint.by == "") {
+        res.json({
+          success: false,
+          message: 'You cannot send the answer to noone.',
+        });
+        return ;
+      }
+      if (body?.complaint.description == "undefined" || body?.complaint.description == "null" || body?.complaint.description == "") {
+        res.json({
+          success: false,
+          message: 'You cannot answer an empty complaint.',
+        });
+        return ;
+      }
+      if (body?.complaint.answer == "undefined" || body?.complaint.answer == "null" || body?.complaint.answer == "") {
+        res.json({
+          success: false,
+          message: 'You cannot submit an empty answer.',
+        });
+        return ;
+      }
+
+      let adminSession = adminSessions.find(adminSession => adminSession.id === body.admin_id)
+
+      if (adminSession) {
+        pool.query('UPDATE complaints SET answer = $1, answered = $2 WHERE by = $3', [body.complaint.answer, true, body.complaint.by], (error, complaintResults) => {
+          if (error) throw error;
+
+          pool.query('SELECT * FROM complaints', (error, results) => {
+            if (error) throw error;
+
+            res.json({
+              success: true,
+              complaints: results.rows,
+            })
+          });
+
+          sendMailForComplaintAnswered(body.complaint);
+        });
+      }
+    }
+
+    /**
+     * /---------------------- POST ----------------------/
      * Sends a complaint.
      * @action complain
      * @param session_id
@@ -506,7 +601,7 @@ export default function handler(req, res) {
       if (session) {
         // date, by, description, answered
         const date = new Date();
-        pool.query('INSERT INTO complaints (date, by, description, answered) VALUES ($1, $2, $3, $4)', [date, session.username, body.description, false], (error, complaintResults) => {
+        pool.query('INSERT INTO complaints (date, by, description, answered, answer) VALUES ($1, $2, $3, $4, $5)', [date, session.username, body.description, false, ''], (error, complaintResults) => {
           if (error) throw error;
 
           res.json({
@@ -729,6 +824,99 @@ export default function handler(req, res) {
         }
       });
     }
+
+    /**
+     * /---------------------- POST ----------------------/
+     * /---------------------- ADMIN ----------------------/
+     * Checks if the entered account info is good, and logs the admin in if so.
+     * @action login_as_admin
+     * @param username
+     * @param password
+     */
+    if (body?.action === 'login_as_admin') {
+      // checks
+      if (body?.username == "undefined" || body?.username == "null" || body?.username == "") {
+        res.json({
+          success: false,
+          message: 'Username is required',
+        });
+        return ;
+      }
+      if (/[^a-zA-Z]/g.test(body?.username)) {
+        res.json({
+          success: false,
+          message: 'Username must contain only letters',
+        })
+        return ;
+      }
+      if (body?.password == "undefined" || body?.password == "null" || body?.password == "") {
+        res.json({
+          success: false,
+          message: 'Password is required',
+        });
+        return ;
+      }
+
+      // everything's okay
+      body.username = body.username.toLowerCase();
+
+      // check if user exists
+      pool.query('SELECT * FROM admins WHERE username = $1', [body.username], (error, adminsResults) => {
+        if (error) throw error;
+
+        if (adminsResults.rows.length === 0) {
+          res.json({
+            success: false,
+            message: 'Admin does not exist.',
+          });
+          return ;
+        }
+        else {
+          if (adminsResults.rows.length > 0) {
+            const user = adminsResults.rows[0];
+
+            const salt = user.salt;
+            const hashedPassword = crypto.pbkdf2Sync(body.password, salt, 1000, 64, 'sha512').toString('hex');
+
+            if (hashedPassword === user.password) {
+              let adminSession = adminSessions.find(session => session.username === adminsResults.rows[0].username)
+
+              if (adminSession) {
+                // Already logged in
+                res.json({
+                  success: true,
+                  message: 'Login successful',
+                  session: adminSession,
+                })
+              }
+              else {
+                // create a session
+                adminSession = {
+                  id: uuidv4(),
+                  username: adminsResults.rows[0].username,
+                }
+
+                adminSessions.push(adminSession);
+
+                res.json({
+                  success: true,
+                  message: 'Login successful',
+                  session: adminSession,
+                })
+              }
+
+              return ;
+            }
+            else {
+              res.json({
+                success: false,
+                message: 'Username and password do not match.',
+              });
+            }
+          }
+        }
+      });
+    }
   }
 }
 
@@ -811,6 +999,44 @@ function sendMailForGameCompletition(game, username, displayName) {
     }
   });
 }
+
+function sendMailForComplaintAnswered(complaint) {
+  pool.query('SELECT * FROM users WHERE username = $1', [complaint.by], (error, results) => {
+    if (error) throw error;
+
+    if (results.rows.length > 0) {
+      const userEmail = results.rows[0].email;
+
+      const message = {
+        from: process.env.GOOGLE_EMAIL,
+        to: userEmail,
+        subject: "Caessino - Your complaint has been answered",
+        html: `
+          <h4>Hello, ${complaint.by}</h4>
+          <p>You wrote a complaint on ${new Date(complaint.date).toGMTString()}, saying:</p>
+          <blockquote><em>${complaint.description}</em></blockquote>
+          <br/>
+          <p>Your complaint has been listened to, here's what the admin has to say:<p>
+          <blockquote><em>${complaint.answer}</em></blockquote>
+          <br/>
+          <p>We hope this fixes your issue,</p>
+          <p>The Team ESS</p>
+          `
+      }
+
+      transporter.sendMail(message, (err, data) => {
+        if (err) {
+            console.log(err);
+        }
+      })
+    }
+  });
+}
+
+/**
+ * Admin session data
+ */
+ export var adminSessions = []
 
 /**
  * User session data

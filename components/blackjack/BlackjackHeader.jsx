@@ -59,8 +59,6 @@ const BlackjackHeader = () => {
                 interval = setInterval(() => {
                     axios.get(`/api/blackjack?action=update_state&session_id=${localStorage.CAESSINO_SESSION_ID}`).then(newRes => {
                         if (newRes.data?.success) {
-                            console.log(newRes.data);
-
                             dispatch(setBlackjackGame(newRes.data?.blackjackGame))
 
                             if (newRes.data?.blackjackGame?.credits !== playerState.player.credits && parseInt(newRes.data?.blackjackGame?.credits) > 0) {
