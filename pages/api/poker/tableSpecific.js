@@ -1,4 +1,4 @@
-import { tables } from '../postgre/index';
+import { saveGameInHistory, tables } from '../postgre/index';
 
 import { deck } from './gameStates'
 
@@ -208,6 +208,8 @@ export function giveMoneyToTheWinners(tableId) {
             }
 
             player.wonAmount = winnings;
+
+            saveGameInHistory('poker', table, player.username)
         })
 
         setTimeout(() => {

@@ -5,7 +5,7 @@ require('dotenv').config();
 import { game, drawASingleCard, getInitialCards, calculateHandValue, getGame, getRestrictedGameObject } from './gameStates';
 import { calculateEarnings, calculateSideBetEarnings } from './calculateEarnings';
 
-import { rooms, update_rooms_to_database } from '../postgre/index'
+import { rooms, saveGameInHistory, update_rooms_to_database } from '../postgre/index'
 
 /**
  * Set up a room
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       const session_id = req.query.session_id;
 
       if (rooms[session_id] !== undefined && rooms[session_id].status.substr(1, 1) === '5') {
-        rooms[session_id] = {...game, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards]};
+        rooms[session_id] = {...game, displayName: rooms[session_id].displayName, username: rooms[session_id].username, playerCards: [...game.playerCards], dealerCards: [...game.dealerCards]};
 
         rooms[session_id].betOutcomeMessageShown = true;
 
@@ -141,6 +141,8 @@ export default async function handler(req, res) {
           }
         });
 
+        saveGameInHistory('blackjack', rooms[session_id], rooms[session_id].username);
+
         return ;
       }
 
@@ -200,6 +202,8 @@ export default async function handler(req, res) {
               })
             }
           });
+          
+          saveGameInHistory('blackjack', rooms[session_id], rooms[session_id].username);
         }
         else {
           res.json({

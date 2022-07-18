@@ -1,6 +1,6 @@
 import { calculateWinnings } from './calculateWinnings'
 
-import { game } from '../postgre/index'
+import { game, saveGameInHistory } from '../postgre/index'
 
 import axios from 'axios';
 
@@ -78,6 +78,9 @@ export function updateGameWithWinners() {
                 player.credits = postgreRes.data?.credits;
             }
         });
+
+        if (player.whichBets?.length > 0)
+            saveGameInHistory('roulette', game, player.username)
     }
 }
 

@@ -178,6 +178,99 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- GET ----------------------/
+     * Get all the games played in the past.
+     * @action get_games_history
+     * @param session_id
+     */
+     if (req.query?.action === 'get_games_history' && req.query?.session_id) {
+      const session_id = req.query.session_id
+      const session = sessions.find(session => session.id === session_id)
+
+      let blackjackHistory = [];
+      let rouletteHistory = [];
+      let pokerHistory = [];
+
+      if (session) {
+        // work
+        pool.query('SELECT * FROM blackjack_history WHERE username = $1', [session.username], (error, blackjackResults) => {
+          if (error) throw error;
+
+          if (blackjackResults.rows.length > 0) {
+            blackjackHistory = blackjackResults.rows[0];
+          }
+          
+          pool.query('SELECT * FROM roulette_history WHERE username = $1', [session.username], (error, rouletteResults) => {
+            if (error) throw error;
+
+            if (rouletteResults.rows.length > 0) {
+              rouletteHistory = rouletteResults.rows[0];
+            }
+            
+            pool.query('SELECT * FROM poker_history WHERE username = $1', [session.username], (error, pokerResults) => {
+              if (error) throw error;
+
+              if (pokerResults.rows.length > 0) {
+                pokerHistory = pokerResults.rows[0];
+              }
+
+              res.json({
+                success: true,
+                blackjack: JSON.parse(blackjackHistory.history ?? "[]"),
+                roulette: JSON.parse(rouletteHistory.history ?? "[]"),
+                poker: JSON.parse(pokerHistory.history ?? "[]"),
+              })
+            });
+          });
+        });
+        
+        return ;
+      }
+      else {
+        res.json({
+          success: false,
+        })
+      }
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
+     * /--------------------- ADMIN ----------------------/
+     * Get all the games currently played.
+     * @action get_live_games_as_admin
+     * @param admin_id
+     */
+     if (req.query?.action === 'get_live_games_as_admin' && req.query?.admin_id) {
+      const admin_id = req.query.admin_id
+      const adminSession = adminSessions.find(adminSession => adminSession.id === admin_id)
+
+      if (adminSession) {
+        let tmpRooms = [];
+  
+        for (let key in rooms) {
+          if (key === "loaded") continue ;
+
+          tmpRooms.push(rooms[key]);
+          tmpRooms[tmpRooms.length - 1].id = key;
+        }
+
+        res.json({
+          success: true,
+          blackjack: tmpRooms,
+          roulette: game,
+          poker: tables,
+        })
+        
+        return ;
+      }
+      else {
+        res.json({
+          success: false,
+        })
+      }
+    }
+
+    /**
+     * /---------------------- GET ----------------------/
      * /--------------------- ADMIN ----------------------/
      * Get complaints from the players and show them to the admin
      * @action get_complaints_as_admin
@@ -206,10 +299,11 @@ export default function handler(req, res) {
         
         return ;
       }
-
-      res.json({
-        success: false,
-      })
+      else {
+        res.json({
+          success: false,
+        })
+      }
     }
 
     /**
@@ -1170,3 +1264,73 @@ export async function load_rooms_from_database() {
   });
 }
 load_rooms_from_database();
+
+export async function saveGameInHistory(gameType, game, username) {
+  if (!username || !game || !gameType) return ;
+
+  if (gameType === 'blackjack') {
+    pool.query('SELECT * FROM blackjack_history WHERE username = $1', [username], (error, results) => {
+      if (error) throw error;
+  
+      if (results.rows.length > 0) {
+        let games = JSON.parse(results?.rows[0]?.history ?? []);
+
+        if (games.indexOf(game) === -1)
+          games.push(game);
+
+        pool.query('UPDATE blackjack_history SET history = $1 WHERE username = $2', [JSON.stringify(games), username], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+      else {
+        pool.query('INSERT INTO blackjack_history (username, history) VALUES ($1, $2)', [username, JSON.stringify([game])], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+    });
+  }
+
+  if (gameType === 'roulette') {
+    pool.query('SELECT * FROM roulette_history WHERE username = $1', [username], (error, results) => {
+      if (error) throw error;
+  
+      if (results.rows.length > 0) {
+        let games = JSON.parse(results?.rows[0]?.history ?? []);
+
+        if (games.indexOf(game) === -1)
+          games.push(game);
+
+        pool.query('UPDATE roulette_history SET history = $1 WHERE username = $2', [JSON.stringify(games), username], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+      else {
+        pool.query('INSERT INTO roulette_history (username, history) VALUES ($1, $2)', [username, JSON.stringify([game])], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+    });
+  }
+
+  if (gameType === 'poker') {
+    pool.query('SELECT * FROM poker_history WHERE username = $1', [username], (error, results) => {
+      if (error) throw error;
+  
+      if (results.rows.length > 0) {
+        let games = JSON.parse(results?.rows[0]?.history ?? []);
+
+        if (games.indexOf(game) === -1)
+          games.push(game);
+
+        pool.query('UPDATE poker_history SET history = $1 WHERE username = $2', [JSON.stringify(games), username], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+      else {
+        pool.query('INSERT INTO poker_history (username, history) VALUES ($1, $2)', [username, JSON.stringify([game])], (error, newResults) => {
+          if (error) throw error;
+        });
+      }
+    });
+  }
+}

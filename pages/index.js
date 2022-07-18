@@ -11,6 +11,7 @@ import Notification from '../components/Notification'
 import Stats from '../components/Stats'
 import ManageCredits from '../components/ManageCredits'
 import ComplainScreen from '../components/Complain'
+import GamesHistory from '../components/GamesHistory'
 
 export default function Home() {
   return (
@@ -51,6 +52,8 @@ export default function Home() {
       <ManageCredits/>
 
       <ComplainScreen/>
+
+      <GamesHistory/>
     </div>
   )
 }

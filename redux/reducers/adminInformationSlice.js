@@ -6,9 +6,15 @@ const initialState = {
         answeringComplaintIndex: -1,
         answerForComplaint: '',
         liveGames: {
-            blackjack: [],
-            roulette: [],
-            poker: [],
+            blackjack: {
+                rooms: [],
+            },
+            roulette: {
+                players: [],
+            },
+            poker: {
+                tables: [],
+            },
         },
     },
 }

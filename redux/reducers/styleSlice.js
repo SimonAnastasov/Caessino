@@ -82,7 +82,20 @@ const initialState = {
         lostConnectionInfo: {
             show: false,
             message: ''
-        }
+        },
+        // games history
+        displayGamesHistoryScreen: false,
+        gamesHistory: {
+            blackjack: {
+                rooms: [],
+            },
+            roulette: {
+                games: [],
+            },
+            poker: {
+                tables: [],
+            },
+        },
     },
     // blackjack
     blackjack: {
@@ -142,7 +155,7 @@ const initialState = {
             text2: '',
             text3: ''
         }
-    }
+    },
 }
 
 export const styleSlice = createSlice({
