@@ -7,6 +7,9 @@ import { useRef } from 'react'
 import { setPlayer } from '../redux/reducers/playerSlice';
 import { setStyle } from '../redux/reducers/styleSlice';
 
+import { FcGoogle } from 'react-icons/fc';
+import { signIn } from 'next-auth/react';
+
 import axios from 'axios';
 
 const LoginScreen = () => {
@@ -145,6 +148,7 @@ const LoginScreen = () => {
                         <button className="primaryButton" onClick={() => closeForm()}>Close Form</button>
                         <button className="secondaryButton" onClick={() => login()}>Log In</button>
                     </div>
+                    <button onClick={() => signIn()} className="primaryButton" style={{marginTop: '10rem', color: '#eee', padding: '.6rem 2rem'}}><FcGoogle style={{padding: '.2rem', background: '#eee', borderRadius: '50%', fontSize: '2rem', marginBottom: '-.4rem'}}/> Log In With Google</button>
                 </div>
             </div>
         </div>

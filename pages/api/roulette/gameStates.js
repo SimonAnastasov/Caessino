@@ -79,8 +79,10 @@ export function updateGameWithWinners() {
             }
         });
 
-        if (player.whichBets?.length > 0)
-            saveGameInHistory('roulette', game, player.username)
+        if (player.whichBets?.length > 0) {
+          game.finished = new Date().toGMTString();
+          saveGameInHistory('roulette', game, player.username)
+        }
     }
 }
 

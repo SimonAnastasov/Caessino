@@ -32,7 +32,7 @@ export const sampleTable = {
 export const samplePlayer = {
     id: '',
     table: '',
-    credits: 0,
+    credits: -1,
     status: '_1_just_entered',
     displayName: '',
     cards: [],
@@ -75,7 +75,7 @@ export function createTable(playerId, playerName, tableName, username) {
             id: playerId,
             table: tableId,
             username: username,
-            credits: 0,
+            credits: -1,
             status: '_1_just_entered',
             displayName: playerName,
             cards: [],

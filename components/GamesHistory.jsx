@@ -38,12 +38,13 @@ const GamesHistory = () => {
                             ))}
                             <h5><Calculations action="calculateHandValue" cards={room.playerCards}/></h5>
                         </div>
-                        <p>Player {room.displayName} (${parseInt(room.initialBet) + parseInt(room.sideBet)})</p>
+                        <p>Player {room?.displayName} (${parseInt(room.initialBet) + parseInt(room.sideBet)})</p>
                         </div>
                         <div>
                         <div>
-                            <h6><span>Outcome:</span><br/>{room.outcome}</h6>
-                            <h6><span>Side Bet Outcome:</span><br/>{room.sideBetOutcome}</h6>
+                            <h6><span>Played on:<br/>{room.finished}</span></h6>
+                            { room?.outcome?.lenght > 0 && <h6><span>Outcome:</span><br/>{room.outcome}</h6> }
+                            { room?.sideBetOutcome.lenght > 0 && <h6><span>Side Bet Outcome:</span><br/>{room.sideBetOutcome}</h6> }
                         </div>
                         </div>
                         <div>
@@ -64,6 +65,7 @@ const GamesHistory = () => {
                     { styleState.style.gamesHistory.roulette?.games?.map((game, gameIdx) => (
                         <div key={`roulettegame${gameIdx}`}>
                             <h6>
+                                <span>Played on: {game?.finished}</span><br/>
                                 <span>Ball on number: </span>{game?.magicNumber}&nbsp;&nbsp;&nbsp;&nbsp;
                                 <span>Winning bets: </span>{game?.winningBets?.join(", ")}
                             </h6>
@@ -74,13 +76,13 @@ const GamesHistory = () => {
                                     <h6><span>Player {i+1} -&gt;</span></h6>
                                 </div>
                                 <div>
-                                    <h6><span>{player.name} (${player.betAmount})</span></h6>
+                                    <h6><span>{player.name} (</span>${player.betAmount}<span>)</span></h6>
                                 </div>
                                 <div>
                                     <h6><span>Betted on: </span>{player.whichBets.join(", ")}</h6>
                                 </div>
                                 <div>
-                                    <h6><span>Outcome: {player.outcome}</span></h6>
+                                    <h6><span>Outcome: </span>{player.outcome}</h6>
                                 </div>
                                 </div>
                             )) }
@@ -93,8 +95,9 @@ const GamesHistory = () => {
                     { styleState.style.gamesHistory.poker?.tables?.map(table => (
                     <div key={table.id} className="livePokerGame">
                         <h6>
-                        <span>Pot: </span>{table?.pot}&nbsp;&nbsp;&nbsp;&nbsp;
-                        <span>Winners: </span>{table?.winners?.map(e=>e.displayName)?.join(", ")}
+                        <span>Played on: {table?.finished}</span><br/>
+                        <span>Pot: </span>${table?.pot}&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span>Winners: </span>{table?.winners?.map(e=>e?.displayName)?.join(", ")}
                         </h6>
                         <div className="cardsOnTable" style={{marginTop: '2rem'}}>
                         { table?.cards?.map((card, i) => (
@@ -105,7 +108,7 @@ const GamesHistory = () => {
                         {table.players?.map(player => (
                         <div key={player.id} className="playerInLivePokerGame">
                             <div>
-                            <h6><span>Player {player.displayName} (${player.betAmount})</span></h6>
+                            <h6><span>Player {player?.displayName} (</span>${player.betAmount}<span>)</span></h6>
                             </div>
                             <div className="cards">
                             { player?.cards?.map((card, i) => (

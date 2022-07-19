@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React from 'react'
 
 import Link from 'next/link'
@@ -48,7 +49,7 @@ const PokerHeader = () => {
                         if (newRes.data?.success) {
                             dispatch(setPokerGame(newRes.data?.pokerGame))
         
-                            if (newRes.data?.pokerGame?.player?.credits !== playerState.player.credits && newRes.data?.pokerGame?.player?.credits > 0) {
+                            if (newRes.data?.pokerGame?.player?.credits !== playerState.player.credits && newRes.data?.pokerGame?.player?.credits >= 0) {
                                 dispatch(setPlayer({
                                     ...playerState.player,
                                     displayName: res.data?.displayName,
@@ -109,11 +110,11 @@ const PokerHeader = () => {
     return (
         <header className="header">
             <div style={{display: 'flex', alignItems: 'center'}}>
-                <Link href="/" passHref>
+                <a href="/">
                     <h2>
                         <AiOutlineArrowLeft />
                     </h2>
-                </Link>
+                </a>
                 { playerState.pokerGame?.player?.table?.length > 0 && <button style={{marginBottom: '4px', marginLeft: '32px', fontSize: '16px'}} className="tertiaryButton" onClick={() => leaveTable()}>Leave Table</button> }
             </div>
             <nav>

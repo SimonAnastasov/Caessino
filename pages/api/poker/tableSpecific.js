@@ -209,6 +209,7 @@ export function giveMoneyToTheWinners(tableId) {
 
             player.wonAmount = winnings;
 
+            table.finished = new Date().toGMTString();
             saveGameInHistory('poker', table, player.username)
         })
 

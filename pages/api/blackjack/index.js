@@ -141,6 +141,7 @@ export default async function handler(req, res) {
           }
         });
 
+        rooms[session_id].finished = new Date().toGMTString();
         saveGameInHistory('blackjack', rooms[session_id], rooms[session_id].username);
 
         return ;
@@ -203,6 +204,7 @@ export default async function handler(req, res) {
             }
           });
           
+          rooms[session_id].finished = new Date().toGMTString();
           saveGameInHistory('blackjack', rooms[session_id], rooms[session_id].username);
         }
         else {

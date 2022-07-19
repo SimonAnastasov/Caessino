@@ -211,7 +211,7 @@ export default async function handler(req, res) {
                             id: req.query.session_id,
                             table: req.query.tableId,
                             username: req.query.username,
-                            credits: 0,
+                            credits: -1,
                             status: '_1_just_entered',
                             displayName: req.query.displayName,
                             cards: [],

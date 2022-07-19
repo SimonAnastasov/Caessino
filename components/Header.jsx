@@ -10,7 +10,50 @@ import { setStyle } from '../redux/reducers/styleSlice'
 
 import axios from 'axios';
 
+import { signOut, useSession } from 'next-auth/react';
+
 const Header = () => {
+  const { data: googleSession } = useSession();
+
+  useEffect(() => {
+    if (googleSession && (!localStorage.CAESSINO_SESSION_ID || localStorage.CAESSINO_SESSION_ID === "")) {
+      axios.post(`/api/postgre`, {
+        action: 'login_via_google',
+        googleSession: googleSession,
+      })
+        .then(res => {
+          if (res.data?.success) {
+            localStorage.CAESSINO_SESSION_ID = res.data?.session?.id;
+
+            dispatch(setPlayer({
+                ...playerState.player,
+                username: res.data?.session?.username,
+                displayName: res.data?.session?.displayName,
+                credits: res.data?.session.credits,
+                session_id: res.data?.session?.id,
+            }));
+
+            dispatch(setStyle({
+                ...styleState.style,
+                displayLoadingScreen: false,
+                displayLoginScreen: false,
+                loginScreenInfo: {
+                    username: '',
+                    password: '',
+                },
+                notification: {
+                    show: true,
+                    text: 'Successfully logged in.',
+                    status: 'success',
+                },
+                inlineAlertText: '',
+            }));
+          }
+      });
+    }
+  }, [googleSession])
+
+
   const dispatch = useDispatch();
 
   const playerState = useSelector(state => state.player);
@@ -49,6 +92,7 @@ const Header = () => {
           room_id: '',
           credits: 0,
         }))
+        signOut();
       }
     })
   }

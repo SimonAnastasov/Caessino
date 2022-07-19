@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React from 'react'
 
 import Link from 'next/link'
@@ -61,7 +62,7 @@ const BlackjackHeader = () => {
                         if (newRes.data?.success) {
                             dispatch(setBlackjackGame(newRes.data?.blackjackGame))
 
-                            if (newRes.data?.blackjackGame?.credits !== playerState.player.credits && parseInt(newRes.data?.blackjackGame?.credits) > 0) {
+                            if (newRes.data?.blackjackGame?.credits !== playerState.player.credits && parseInt(newRes.data?.blackjackGame?.credits) >= 0) {
                                 dispatch(setPlayer({
                                     ...playerState.player,
                                     displayName: res.data?.displayName,
@@ -137,11 +138,11 @@ const BlackjackHeader = () => {
 
     return (
         <header className="header">
-            <Link href="/" passHref>
+            <a href="/">
                 <h2>
                     <AiOutlineArrowLeft />
                 </h2>
-            </Link>
+            </a>
             <nav>
                 <ul>
                     <li>Hi, {playerState?.player?.displayName}</li>

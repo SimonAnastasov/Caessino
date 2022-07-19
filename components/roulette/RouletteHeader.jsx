@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React from 'react'
 
 import Link from 'next/link'
@@ -75,7 +76,7 @@ const RouletteHeader = () => {
                                 spin_wheel(newRes.data.magicNumber ?? -1, newRes.data.winningBets ?? -1);
                             }
 
-                            if (newRes.data?.rouletteGame?.player?.credits !== playerState.player.credits && newRes.data?.rouletteGame?.player?.credits > 0) {
+                            if (newRes.data?.rouletteGame?.player?.credits !== playerState.player.credits && newRes.data?.rouletteGame?.player?.credits >= 0) {
                                 dispatch(setPlayer({
                                     ...playerState.player,
                                     displayName: res.data?.displayName,
@@ -145,11 +146,11 @@ const RouletteHeader = () => {
 
     return (
         <header className="header">
-            <Link href="/" passHref>
+            <a href="/">
                 <h2>
                     <AiOutlineArrowLeft />
                 </h2>
-            </Link>
+            </a>
             <nav>
                 <ul>
                     <li>Hi, {playerState?.player?.displayName}</li>

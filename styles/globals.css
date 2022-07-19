@@ -761,6 +761,15 @@ header.header nav.mainHeaderNavigation ul li {
           justify-content: center;
 }
 
+.liveGamesMegaContainer .liveGamesContainer > div .cards {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
 .liveGamesMegaContainer .liveGamesContainer > div .cards .card {
   margin-inline: -1.6rem;
   height: 100px;

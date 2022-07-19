@@ -712,6 +712,9 @@ header.header {
       }
 
       .cards {
+        display: flex;
+        justify-content: center;
+        
         .card {
           margin-inline: -1.6rem;
           

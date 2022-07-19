@@ -15,6 +15,8 @@ const pool = new Pool({
   connectionString: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}/${process.env.POSTGRES_DB}`
 });
 
+let LAST_LOGIN_REQUEST = Date.now();
+
 export default function handler(req, res) {
   /**
    * GET method
@@ -215,9 +217,9 @@ export default function handler(req, res) {
 
               res.json({
                 success: true,
-                blackjack: JSON.parse(blackjackHistory.history ?? "[]"),
-                roulette: JSON.parse(rouletteHistory.history ?? "[]"),
-                poker: JSON.parse(pokerHistory.history ?? "[]"),
+                blackjack: JSON.parse(blackjackHistory.history ?? "[]").reverse(),
+                roulette: JSON.parse(rouletteHistory.history ?? "[]").reverse(),
+                poker: JSON.parse(pokerHistory.history ?? "[]").reverse(),
               })
             });
           });
@@ -452,7 +454,7 @@ export default function handler(req, res) {
     /**
      * /---------------------- POST ----------------------/
      * Deposits money from credit card to game account.
-     * @action register
+     * @action deposit
      * @param session_id
      * @param data
      */
@@ -523,6 +525,19 @@ export default function handler(req, res) {
             })
             
             update_sessions_to_database();
+
+            pool.query('SELECT * FROM credit_cards WHERE username = $1', [session.username], (error, cardsResults) => {
+              if (error) throw error;
+
+              if (cardsResults.rows.length === 0) {
+                const cardSalt = crypto.randomBytes(16).toString('hex');
+                const cardShort = body.data.name + body.data.card + body.data.expire + body.data.ccv;
+                const cardHash = crypto.pbkdf2Sync(cardShort, cardSalt, 1000, 64, 'sha512').toString('hex');
+                pool.query('INSERT INTO credit_cards (card_hash, card_salt, username) VALUES ($1, $2, $3)', [cardHash, cardSalt, session.username], (error, results) => {
+                  if (error) throw error;
+                });
+              }
+            });
           });
         }
       }
@@ -531,7 +546,7 @@ export default function handler(req, res) {
     /**
      * /---------------------- POST ----------------------/
      * Withdraws money from game account to personal account.
-     * @action register
+     * @action withdraw
      * @param session_id
      * @param data
      */
@@ -921,6 +936,115 @@ export default function handler(req, res) {
 
     /**
      * /---------------------- POST ----------------------/
+     * Checks if an active google session is available, and logs the user via their google account.
+     * @action login_via_google
+     * @param googleSession
+     */
+    if (body?.action === 'login_via_google') {
+      // checks
+      if (!body?.googleSession?.user?.email || body?.googleSession?.user?.email == "undefined" || body?.googleSession?.user?.email == "null" || body?.googleSession?.user?.email == "") {
+        res.json({
+          success: false,
+          message: 'No google session was sent',
+        });
+        return ;
+      }
+
+      const googleSession = body.googleSession.user;
+      googleSession.username = googleSession.email;
+
+      // check if user already exists
+      pool.query('SELECT * FROM users WHERE username = $1', [googleSession.username], (error, results) => {
+        if (error) throw error;
+
+        if (results.rows.length > 0) {
+          let session = sessions.find(session => session.username === googleSession.username)
+
+          if (session) {
+            // Already logged in
+            res.json({
+              success: true,
+              message: 'Login successful',
+              session: session,
+            })
+          }
+          else {
+            pool.query('SELECT * FROM players WHERE username = $1', [googleSession.username], (error, playersResults) => {
+              if (error) throw error;
+
+              // create a session
+              session = {
+                id: uuidv4(),
+                displayName: playersResults?.rows[0]?.display_name,
+                username: playersResults?.rows[0]?.username,
+                credits: playersResults?.rows[0]?.credits,
+                lastActivity: Date.now(),
+              }
+
+              sessions.push(session);
+
+              update_sessions_to_database();
+
+              res.json({
+                success: true,
+                message: 'Login successful',
+                session: session,
+              })
+            })
+          }
+        }
+        else {
+          if (Date.now() - LAST_LOGIN_REQUEST <= 3000) {
+            res.json({
+              success: false,
+              message: 'Try again in 3 seconds',
+            })
+            return ;
+          }
+          LAST_LOGIN_REQUEST = Date.now();
+
+          // store user in database
+          pool.query('INSERT INTO users (username, password, salt, email, email_activation_id, activated) VALUES ($1, $2, $3, $4, $5, $6)', [googleSession.username, "none", "none", googleSession.email, "none", true], (error, usersResults) => {
+            if (error) throw error;
+
+            pool.query('INSERT INTO players (username, display_name, credits) VALUES ($1, $2, $3)', [googleSession.username, googleSession.name, 1000], (error, playersResults) => {
+              if (error) throw error;
+
+              pool.query('INSERT INTO stats (username, blackjack_games, roulette_games, poker_games, blackjack_won_games, roulette_won_games, poker_won_games, money_bet, money_earned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [googleSession.username, 0, 0, 0, 0, 0, 0, 0, 0], (error, statsResults) => {
+                if (error) throw error;
+
+                pool.query('SELECT * FROM players WHERE username = $1', [googleSession.username], (error, playersResults) => {
+                  if (error) throw error;
+
+                  // create a session
+                  const session = {
+                    id: uuidv4(),
+                    displayName: playersResults?.rows[0]?.display_name,
+                    username: playersResults?.rows[0]?.username,
+                    credits: playersResults?.rows[0]?.credits,
+                    lastActivity: Date.now(),
+                  }
+
+                  sessions.push(session);
+
+                  update_sessions_to_database();
+
+                  res.json({
+                    success: true,
+                    message: 'Login successful',
+                    session: session,
+                  })
+                })
+
+              });
+            });
+          });
+        }
+      });
+    }
+
+    /**
+     * /---------------------- POST ----------------------/
      * /---------------------- ADMIN ----------------------/
      * Checks if the entered account info is good, and logs the admin in if so.
      * @action login_as_admin
@@ -1051,8 +1175,6 @@ let mailSentTo = {
   blackjack: [],
 }
 function sendMailForGameCompletition(game, username, displayName) {
-  return ;
-
   const msgPoker = 'Your game was played to the end by the computer with the following rules:<br/>1. No more bets were made by any player;<br/>2. Cards were dealt normally like they would be under normal circumstances;<br/>3. Credits were given to the winners and taken from the losers.';
   const msgRoulette = 'If you reconnect immediately, you can catch this ongoing game. But don\'t worry if you can\'t! If you win, credits will be awarded to you.';
   const msgBlackjack = 'You can now continue playing your game.';
@@ -1107,7 +1229,7 @@ function sendMailForComplaintAnswered(complaint) {
         subject: "Caessino - Your complaint has been answered",
         html: `
           <h4>Hello, ${complaint.by}</h4>
-          <p>You wrote a complaint on ${new Date(complaint.date).toGMTString()}, saying:</p>
+          <p>You wrote a complaint on ${new Date(complaint.date).toGMTString()}, saying:</p>$
           <blockquote><em>${complaint.description}</em></blockquote>
           <br/>
           <p>Your complaint has been listened to, here's what the admin has to say:<p>

@@ -70,13 +70,13 @@ const LiveGames = () => {
                     ))}
                     <h5><Calculations action="calculateHandValue" cards={room.playerCards}/></h5>
                   </div>
-                  <p>Player {room.displayName} (${parseInt(room.initialBet) + parseInt(room.sideBet)})</p>
+                  <p>Player {room?.displayName} (${parseInt(room.initialBet) + parseInt(room.sideBet)})</p>
                 </div>
                 <div>
                   <div>
                       <h6><span>Status:</span><br/>{room.status}</h6>
-                      <h6><span>Outcome:</span><br/>{room.outcome}</h6>
-                      <h6><span>Side Bet Outcome:</span><br/>{room.sideBetOutcome}</h6>
+                      { room?.outcome?.length > 0 && <h6><span>Outcome:</span><br/>{room.outcome}</h6> }
+                      { room?.sideBetOutcome?.length > 0 && <h6><span>Side Bet Outcome:</span><br/>{room.sideBetOutcome}</h6> }
                   </div>
                 </div>
                 <div>
@@ -98,8 +98,8 @@ const LiveGames = () => {
               <h6>
                 <span>Status: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.status}&nbsp;&nbsp;&nbsp;&nbsp;
                 <span>Time to start: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.timeToStart}&nbsp;&nbsp;&nbsp;&nbsp;
-                <span>Ball on number: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.magicNumber}&nbsp;&nbsp;&nbsp;&nbsp;
-                <span>Winning bets: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.winningBets?.join(", ")}
+                { adminInformationState.adminInformation?.liveGames?.roulette?.magicNumber != -1 && <><span>Ball on number: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.magicNumber}&nbsp;&nbsp;&nbsp;&nbsp;</> }
+                { adminInformationState.adminInformation?.liveGames?.roulette?.magicNumber != -1 && <><span>Winning bets: </span>{adminInformationState.adminInformation?.liveGames?.roulette?.winningBets?.join(", ")}</> }
               </h6>
               <h6 style={{marginTop: '2rem'}}><span>Players:</span></h6>
               { adminInformationState.adminInformation?.liveGames?.roulette?.players?.map((player, i) => (
@@ -108,13 +108,13 @@ const LiveGames = () => {
                     <h6><span>Player {i+1} -&gt;</span></h6>
                   </div>
                   <div>
-                    <h6><span>{player.name} (${player.betAmount})</span></h6>
+                    <h6><span>{player.name} (${player?.betAmount})</span></h6>
                   </div>
                   <div>
-                    <h6><span>Betted on: </span>{player.whichBets.join(", ")}</h6>
+                    { player?.whichBets?.length > 0 && <h6><span>Betted on: </span>{player?.whichBets?.join(", ")}</h6> }
                   </div>
                   <div>
-                    <h6><span>Outcome: {player.outcome}</span></h6>
+                    { adminInformationState.adminInformation?.liveGames?.roulette?.magicNumber != -1 && player?.whichBets?.length > 0 && <h6><span>Outcome: </span>{player.outcome}</h6> }
                   </div>
                 </div>
               )) }
@@ -128,9 +128,9 @@ const LiveGames = () => {
                 <h6>
                   <span>Round: </span>{table?.round}/4&nbsp;&nbsp;&nbsp;&nbsp;
                   <span>Started: </span>{table?.started}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>Player on turn: </span>{table?.turnIdx}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>Pot: </span>{table?.pot}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>Winners: </span>{table?.winners?.map(e=>e.displayName)?.join(", ")}
+                  <span>Player on turn: </span>{table.players[table.turnIdx]?.displayName ?? '-'}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span>Pot: </span>${table?.pot}&nbsp;&nbsp;&nbsp;&nbsp;
+                  { table?.winners?.length > 0 && <><span>Winners: </span>{table?.winners?.map(e=>e?.displayName)?.join(", ")}</> }
                 </h6>
                 <div className="cardsOnTable" style={{marginTop: '2rem'}}>
                   { table?.cards?.map((card, i) => (
@@ -141,7 +141,7 @@ const LiveGames = () => {
                 {table.players?.map(player => (
                   <div key={player.id} className="playerInLivePokerGame">
                     <div>
-                      <h6><span>Player {player.displayName} (${player.betAmount})</span></h6>
+                      <h6><span>Player {player?.displayName} (${player.betAmount})</span></h6>
                     </div>
                     <div className="cards">
                       { player?.cards?.map((card, i) => (
@@ -149,7 +149,7 @@ const LiveGames = () => {
                       ))}
                     </div>
                     <div>
-                      <h6><span>Hand: </span><Calculations action="getBestHandDetails" cards={player.cards} cards2={table.cards}/></h6>
+                      { table?.cards?.length > 0 && <h6><span>Hand: </span><Calculations action="getBestHandDetails" cards={player.cards} cards2={table.cards}/></h6> }
                     </div>
                   </div>
                 ))}
